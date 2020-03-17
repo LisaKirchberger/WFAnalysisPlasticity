@@ -62,7 +62,7 @@ for m = 1:length(AnalysisParameters.Mice)
                         AnalyseDataDets.LogfilePath{AnalyseCounter} = fullfile(logPath.folder, logPath.name);
                         AnalyseDataDets.Mouse{AnalyseCounter} = jsonData.subject;
                         AnalyseDataDets.SessID(AnalyseCounter) = SessID;
-                        AnalyseDataDets.MouseSessID(AnalyseCounter) = MouseSessID;
+                        AnalyseDataDets.MouseSessID = MouseSessID;
                         
                         % Fill in SessionLUT SessID, MouseName, MouseSessID, LogfileName, Date, DataPath, LogfilePath
                         MouseName = cellstr(AnalysisParameters.Mice{m});
@@ -77,7 +77,6 @@ for m = 1:length(AnalysisParameters.Mice)
                         tmptable = table(SessID, MouseName, MouseSessID, LogfileName, Date, DataPath, LogfilePath);
                         SessionLUT = [SessionLUT; tmptable]; %#ok<AGROW>
                         SessID = SessID + 1;
-                        MouseSessID = MouseSessID + 1;
                         AnalyseCounter = AnalyseCounter +1;
                         
                         disp(['Added ' Days(d).name ', session ' Sessions(s).name])

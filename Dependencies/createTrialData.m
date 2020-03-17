@@ -5,6 +5,7 @@ function createTrialData(AnalyseDataDets,AnalysisParameters)
 
 for s = 1:size(AnalyseDataDets.SessID,2)
     
+    fprintf('Creating trial data for SessionID %s \n', num2str(AnalyseDataDets.SessID(s)))
     Mouse = AnalyseDataDets.Mouse{s};
 
     %% load in newest version of the lookup table and the already processed data and the logfile
@@ -23,7 +24,7 @@ for s = 1:size(AnalyseDataDets.SessID,2)
     %% Reference Image using the pRF map
     
     if exist(fullfile(AnalysisParameters.pRFMappingDir,Mouse,'RefImg.mat'), 'file')
-        load(fullfile(AnalysisParameters.pRFMappingDir,Mouse,'RefImg'))
+        load(fullfile(AnalysisParameters.pRFMappingDir,Mouse,'RefImg')) %#ok<*LOAD>
         refImage = uint16(brain);
         clear brain
     else
@@ -93,6 +94,10 @@ for s = 1:size(AnalyseDataDets.SessID,2)
     %% see how big data will be and then start Loop
     
     for t = 1:nTrials
+        
+        if t/25 == round(t/25)
+            fprintf('Trial %s out of %s \n', num2str(t), num2str(nTrials))
+        end
         
         %% Create DataTank & look for the images
         

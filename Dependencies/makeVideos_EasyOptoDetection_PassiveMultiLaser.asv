@@ -57,45 +57,7 @@ for s = AnalyseDataDets.SessID
         if strcmp(AnalysisParameters.PlotFigures, 'on')
             figure('visible', AnalysisParameters.PlotFigures, 'Position', [ -576   692   560   420]);
             for t = 1:length(AnalysisParameters.Timeline)
-                if any(any(~isnan(Cond_dFF_avg(:,:,t))))
-                    im = imagesc(RefImage);colormap gray;
-                    im.AlphaData = BrainMask;
-                    freezeColors
-                    hold on
-                    h=imagesc(Cond_dFF_avg(:,:,t),lims);
-                    colormap(redblue)
-                    clb = colorbar;
-                    clb.Label.String = 'dFF';
-                    cbfreeze(clb)
-                    imAlpha = BrainMaskShade;imAlpha(isnan(Cond_dFF_avg(:,:,t))) = false;
-                    h.AlphaData = imAlpha;
-                    plot(Model.AllX,Model.AllY,'k.', 'MarkerSize', 2)
-                    axis square
-                    box off
-                    axis off
-                    title([CondLUT.CondWord{c} ' ' num2str(AnalysisParameters.Timeline(t)) ' ms'])
-                    if AnalysisParameters.Timeline(t) == 0
-                        annot = annotation('textbox',[.05 .9 0 0],'String','Stimulus ON' ,'FitBoxToText','on', 'EdgeColor', 'red', 'LineWidth', 2);
-                    elseif AnalysisParameters.Timeline(t) >= round(TrialLUT.Stimdur(CondLUT.TrialIDs{c}(1)))*1000
-                        annot.Visible = 'off';
-                        clear annot
-                    end
-                    hold off
-                    pause(0.3)
-                end
-            end
-        end
-        
-        
-        %% make a video and store it
-        
-        videoname = [AnalysisParameters.VideoPath '\C' num2str(c) '_' LogName '_' CondLUT.CondWord{c}];
-        myVideo = VideoWriter(videoname);
-        myVideo.FrameRate = 5;
-        open(myVideo)
-        for t = 1:length(AnalysisParameters.Timeline)
-            if any(any(~isnan(Cond_dFF_avg(:,:,t))))
-                fh = figure('visible', 'off','units','normalized');
+                
                 im = imagesc(RefImage);colormap gray;
                 im.AlphaData = BrainMask;
                 freezeColors
@@ -112,13 +74,47 @@ for s = AnalyseDataDets.SessID
                 box off
                 axis off
                 title([CondLUT.CondWord{c} ' ' num2str(AnalysisParameters.Timeline(t)) ' ms'])
-                if AnalysisParameters.Timeline(t) >= 0 && AnalysisParameters.Timeline(t) <= round(TrialLUT.Stimdur(CondLUT.TrialIDs{c}(1)))*1000
+                if AnalysisParameters.Timeline(t) == 0
                     annot = annotation('textbox',[.05 .9 0 0],'String','Stimulus ON' ,'FitBoxToText','on', 'EdgeColor', 'red', 'LineWidth', 2);
+                elseif AnalysisParameters.Timeline(t) >= round(TrialLUT.Stimdur(CondLUT.TrialIDs{c}(1)))*1000
+                    annot.Visible = 'off';
+                    clear annot
                 end
-                frame = getframe(fh);
-                writeVideo(myVideo,frame);
-                close(fh)
+                hold off
+                pause(0.3)
             end
+        end
+        
+        
+        %% make a video and store it
+        
+        videoname = [AnalysisParameters.VideoPath '\C' num2str(c) '_' LogName '_' CondLUT.CondWord{c}];
+        myVideo = VideoWriter(videoname);
+        myVideo.FrameRate = 5;
+        open(myVideo)
+        for t = 1:length(AnalysisParameters.Timeline)
+            fh = figure('visible', 'off','units','normalized');
+            im = imagesc(RefImage);colormap gray;
+            im.AlphaData = BrainMask;
+            freezeColors
+            hold on
+            h=imagesc(Cond_dFF_avg(:,:,t),lims);
+            colormap(redblue)
+            clb = colorbar;
+            clb.Label.String = 'dFF';
+            cbfreeze(clb)
+            h.AlphaData = BrainMaskShade;
+            plot(Model.AllX,Model.AllY,'k.', 'MarkerSize', 2)
+            axis square
+            box off
+            axis off
+            title([CondLUT.CondWord{c} ' ' num2str(AnalysisParameters.Timeline(t)) ' ms'])
+            if AnalysisParameters.Timeline(t) >= 0 && AnalysisParameters.Timeline(t) <= round(TrialLUT.Stimdur(CondLUT.TrialIDs{c}(1)))*1000
+                annot = annotation('textbox',[.05 .9 0 0],'String','Stimulus ON' ,'FitBoxToText','on', 'EdgeColor', 'red', 'LineWidth', 2);
+            end
+            frame = getframe(fh);
+            writeVideo(myVideo,frame);
+            close(fh)
         end
         close(myVideo)
         

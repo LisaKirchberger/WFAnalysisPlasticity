@@ -2,6 +2,7 @@ function createCondData(AnalyseDataDets,AnalysisParameters)
 
 for s = AnalyseDataDets.SessID
     
+    fprintf('Creating condition data for SessionID %s  \n', num2str(s))
     
     %% load in newest version of the lookup tables and the already processed data and the logfile
     
