@@ -28,7 +28,7 @@ for M = 1:size(AnalysisParameters.Mice,2)
     
     %% If Data is already present, just show it
     
-    if exist(BrainModelFileMouse, 'file') && RedoAlignment_Mouse == 0
+    if exist(BrainModelFileMouse, 'file') && RedoAlignment_Mouse == 0 && strcmp(AnalysisParameters.PlotFigures, 'on')
         
         %% Load in mouse specific AllenBrainModel and the pRF reference image
         

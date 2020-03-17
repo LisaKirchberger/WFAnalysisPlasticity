@@ -11,29 +11,13 @@ function AnalyseDataDets = gatherDataInfo(AnalysisParameters)
 %% if want to overwrite all Data, create an empty SessionLUT and Delete the currently present preprocessed Data
 
 if AnalysisParameters.OverwriteData == 1 || ~exist(AnalysisParameters.SessionLUTPath, 'file')
-    % create empty Session lookup table
-    SessID = [];MouseName = [];MouseSessID = [];LogfileName = [];Date = [];DataPath = [];LogfilePath = [];
-    SessionLUT = table(SessID, MouseName, MouseSessID, LogfileName, Date, DataPath, LogfilePath);
-    if ~exist([AnalysisParameters.DataDirectory AnalysisParameters.Task], 'dir')
-        mkdir(AnalysisParameters.SessionLUTPath)
-    end
+    % create empty Session Lookup table
+    SessionLUT = table();
     save(AnalysisParameters.SessionLUTPath, 'SessionLUT')
-    % Folder for the Trial Data
-    if exist(AnalysisParameters.TrialWFDataPath, 'dir')
-        rmdir(AnalysisParameters.TrialWFDataPath, 's')
-    end
-    mkdir(AnalysisParameters.TrialWFDataPath)
-    % Folder for the Cond Data
-    if exist(AnalysisParameters.CondWFDataPath, 'dir')
-        rmdir(AnalysisParameters.CondWFDataPath, 's')
-    end
-    mkdir(AnalysisParameters.CondWFDataPath)
-    % create an empty master Trial Lookup table
-    delete(AnalysisParameters.TrialLUTPath)
-    TrialLUT = table();
+    % create an empty Trial Lookup table
+    TrialLUT = table(); %#ok<*NASGU>
     save(AnalysisParameters.TrialLUTPath, 'TrialLUT')
-    % create an empty master Condition Lookup table
-    delete(AnalysisParameters.CondLUTPath)
+    % create an empty Condition Lookup table
     CondLUT = table();
     save(AnalysisParameters.CondLUTPath, 'CondLUT')
 end
@@ -44,11 +28,11 @@ end
 load(AnalysisParameters.SessionLUTPath)
 
 cd(AnalysisParameters.RawDataDirectory)
-SessIDcounter = size(SessionLUT.SessID,1)+1;
+SessID = size(SessionLUT.SessID,1)+1;
 AnalyseCounter = 1;
 
 for m = 1:length(AnalysisParameters.Mice)
-    MouseCounter = sum(strcmp(SessionLUT.MouseName, AnalysisParameters.Mice{m}))+1;
+    MouseSessID = sum(strcmp(SessionLUT.MouseName, AnalysisParameters.Mice{m}))+1;
     MouseDir = fullfile(AnalysisParameters.RawDataDirectory, AnalysisParameters.Mice{m});
     cd(MouseDir)
     
@@ -76,12 +60,11 @@ for m = 1:length(AnalysisParameters.Mice)
                         AnalyseDataDets.DataPath{AnalyseCounter} = SessDir;
                         AnalyseDataDets.LogfilePath{AnalyseCounter} = fullfile(logPath.folder, logPath.name);
                         AnalyseDataDets.Mouse{AnalyseCounter} = jsonData.subject;
-                        AnalyseDataDets.SessID(AnalyseCounter) = SessIDcounter;
+                        AnalyseDataDets.SessID(AnalyseCounter) = SessID;
+                        AnalyseDataDets.MouseSessID = MouseSessID;
                         
                         % Fill in SessionLUT SessID, MouseName, MouseSessID, LogfileName, Date, DataPath, LogfilePath
-                        SessID = SessIDcounter;
                         MouseName = cellstr(AnalysisParameters.Mice{m});
-                        MouseSessID = MouseCounter;
                         LogfileName = jsonData.logfile;
                         if strcmp(LogfileName(end-3:end), '.mat')
                             LogfileName = LogfileName(1:end-4);
@@ -92,8 +75,7 @@ for m = 1:length(AnalysisParameters.Mice)
                         LogfilePath = cellstr(fullfile(logPath.folder, logPath.name));
                         tmptable = table(SessID, MouseName, MouseSessID, LogfileName, Date, DataPath, LogfilePath);
                         SessionLUT = [SessionLUT; tmptable]; %#ok<AGROW>
-                        SessIDcounter = SessIDcounter + 1;
-                        MouseCounter = MouseCounter +1;
+                        SessID = SessID + 1;
                         AnalyseCounter = AnalyseCounter +1;
                         
                         disp(['Added ' Days(d).name ', session ' Sessions(s).name])
@@ -109,6 +91,8 @@ end
 %% Save the SessionLUT
 
 save(AnalysisParameters.SessionLUTPath, 'SessionLUT')
+cd(AnalysisParameters.ScriptsDir)
+
 
 end
 

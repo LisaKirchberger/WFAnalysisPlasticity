@@ -1,24 +1,24 @@
 function createTrialData(AnalyseDataDets,AnalysisParameters)
 
+
 %% Run through the Sessions that need to be analysed and add the logfiles to the master lookup table and the data into the tall array
-
-
 
 for s = 1:size(AnalyseDataDets.SessID,2)
     
     Mouse = AnalyseDataDets.Mouse{s};
-    
-    
+
     %% load in newest version of the lookup table and the already processed data and the logfile
     
     load(AnalysisParameters.TrialLUTPath)
     load(AnalyseDataDets.LogfilePath{s})
     
-    %% add TrialID as a field in the Logtable
+    %% add some info to the Logtable
     
     TrialID = size(TrialLUT,1)+1;
     Log_table.TrialID = (TrialID:TrialID+size(Log_table,1)-1)';
-    Log_table.SessID = repmat(s,size(Log_table,1),1);
+    Log_table.SessID = repmat(AnalyseDataDets.SessID(s),size(Log_table,1),1);
+    Log_table.MouseSessID = repmat(AnalyseDataDets.MouseSessID(s),size(Log_table,1),1);
+    
     
     %% Reference Image using the pRF map
     
@@ -91,19 +91,16 @@ for s = 1:size(AnalyseDataDets.SessID,2)
     
     
     %% see how big data will be and then start Loop
-    [oypix, oxpix, ~] = size(refImage);
-    ypix = oypix*AnalysisParameters.ScaleFact;
-    xpix = oxpix*AnalysisParameters.ScaleFact;
     
     for t = 1:nTrials
         
         %% Create DataTank & look for the images
         
-        TrialData = nan(ypix, xpix, nFrames, 'single');
+        TrialData = nan(AnalysisParameters.Pix, AnalysisParameters.Pix, nFrames, 'single');
         
         % find the correct Folder
         myFolder = strcmp({TrialDirs.name}, [Mouse Log.Expnum '_' num2str(t)]);
-        cd(fullfile(TrialDirs(t).folder, TrialDirs(myFolder).name))
+        cd(fullfile(TrialDirs(myFolder).folder, TrialDirs(myFolder).name))
         images = dir('*tiff');
         
         
@@ -124,7 +121,7 @@ for s = 1:size(AnalyseDataDets.SessID,2)
                 warning('Images 1600x1600, downsample this data!')
                 cd(AnalysisParameters.RawDataDirectory)
                 downsampleraw
-                cd(fullfile(TrialDirs(t).folder, TrialDirs(t).name))
+                cd(fullfile(TrialDirs(myFolder).folder, TrialDirs(myFolder).name))
                 images = dir('*tiff');
             end
         end
@@ -189,6 +186,8 @@ for s = 1:size(AnalyseDataDets.SessID,2)
 end %Sessions
 
 cd(AnalysisParameters.ScriptsDir)
+
+
 end %Function
 
 

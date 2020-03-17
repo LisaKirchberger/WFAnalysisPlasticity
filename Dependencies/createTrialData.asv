@@ -2,8 +2,6 @@ function createTrialData(AnalyseDataDets,AnalysisParameters)
 
 %% Run through the Sessions that need to be analysed and add the logfiles to the master lookup table and the data into the tall array
 
-
-
 for s = 1:size(AnalyseDataDets.SessID,2)
     
     Mouse = AnalyseDataDets.Mouse{s};
@@ -102,8 +100,8 @@ for s = 1:size(AnalyseDataDets.SessID,2)
         TrialData = nan(ypix, xpix, nFrames, 'single');
         
         % find the correct Folder
-        myFolder = strcmp(cell(TrialDirs.name), [Mouse Log.Expnum '_' num2str(t)])
-        cd(fullfile(TrialDirs(t).folder, TrialDirs(t).name))
+        myFolder = strcmp({TrialDirs.name}, [Mouse Log.Expnum '_' num2str(t)]);
+        cd(fullfile(TrialDirs(t).folder, TrialDirs(myFolder).name))
         images = dir('*tiff');
         
         
@@ -162,7 +160,7 @@ for s = 1:size(AnalyseDataDets.SessID,2)
             tdiff = abs(frameinfo.TimeLine{t} - AnalysisParameters.Timeline(x));
             if min(tdiff) < AnalysisParameters.Exposure/2
                 Frameidx = find(tdiff == min(tdiff), 1);
-                Image = imread(fullfile(TrialDirs(t).folder, TrialDirs(t).name,  frameinfo.ImageName{t}{Frameidx}), 'tiff');Image = Image(:,:,1);
+                Image = imread(images(Frameidx).name, 'tiff');Image = Image(:,:,1);
                 regImage = imwarp(Image,TM,'OutputView',imref2d(size(refImage)));
                 if AnalysisParameters.SmoothFact>0
                     regImage = imgaussfilt(regImage,AnalysisParameters.SmoothFact);

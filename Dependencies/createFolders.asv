@@ -1,23 +1,63 @@
-function AnalyseDataDets = gatherDataInfo(AnalysisParameters)
+function createFolders(AnalysisParameters)
 
-%% Get all the wanted Data
+% if AnalysisParameters.Overwrite = 1; it will first remove all existing folders to then remake them
+% if AnalysisParameters.Overwrite = 0; it will just make missing folders
 
-% This Script looks through all JSON files of the given AnalysisParameters.Mice and selects the
-% paths of the Sessions you want to analyse
-% if AnalysisParameters.Overwrite = 1; it will just take all paths of that AnalysisParameters.Task it can find
-% if AnalysisParameters.Overwrite = 0; it will check if the Session has already been preprocessed and just append data that is still missing
+if AnalysisParameters.OverwriteData == 1
+    % Folder for the Trial Data
+    if exist(AnalysisParameters.TrialWFDataPath, 'dir')
+        rmdir(AnalysisParameters.TrialWFDataPath, 's')
+    end
+    % Folder for the Cond Data
+    if exist(AnalysisParameters.CondWFDataPath, 'dir')
+        rmdir(AnalysisParameters.CondWFDataPath, 's')
+    end
+    % Folder for the reference images
+    if exist(AnalysisParameters.RefImgPath, 'dir')
+        rmdir(AnalysisParameters.RefImgPath, 's')
+    end
+    % Folder for the Videos
+    if exist(AnalysisParameters.VideoPath, 'dir')
+        rmdir(AnalysisParameters.VideoPath, 's')
+    end
+end
+
+if ~exist([AnalysisParameters.DataDirectory AnalysisParameters.Task], 'dir')
+    mkdir(AnalysisParameters.SessionLUTPath)
+end
+
+if ~exist(AnalysisParameters.TrialWFDataPath, 'dir')
+    mkdir(AnalysisParameters.TrialWFDataPath)
+end
+
+if ~exist(AnalysisParameters.CondWFDataPath, 'dir')
+    mkdir(AnalysisParameters.CondWFDataPath)
+end
+
+if ~exist(AnalysisParameters.RefImgPath, 'dir')
+    mkdir(AnalysisParameters.RefImgPath)
+end
+
+if ~exist(AnalysisParameters.VideoPath, 'dir')
+    mkdir(AnalysisParameters.CondWFDataPath)
+end
 
 
-%% if want to overwrite all Data, create an empty SessionLUT and Delete the currently present preprocessed Data
+
 
 if AnalysisParameters.OverwriteData == 1 || ~exist(AnalysisParameters.SessionLUTPath, 'file')
-    % create empty Session Lookup table
-    SessionLUT = table();
+    % create empty Session lookup table
+    %SessID = [];MouseName = [];MouseSessID = [];LogfileName = [];Date = [];DataPath = [];LogfilePath = [];
+    SessionLUT = table();%SessID, MouseName, MouseSessID, LogfileName, Date, DataPath, LogfilePath);
+    
     save(AnalysisParameters.SessionLUTPath, 'SessionLUT')
-    % create an empty Trial Lookup table
-    TrialLUT = table(); %#ok<*NASGU>
+    
+    % create an empty master Trial Lookup table
+    delete(AnalysisParameters.TrialLUTPath)
+    TrialLUT = table();
     save(AnalysisParameters.TrialLUTPath, 'TrialLUT')
-    % create an empty Condition Lookup table
+    % create an empty master Condition Lookup table
+    delete(AnalysisParameters.CondLUTPath)
     CondLUT = table();
     save(AnalysisParameters.CondLUTPath, 'CondLUT')
 end
@@ -28,7 +68,7 @@ end
 load(AnalysisParameters.SessionLUTPath)
 
 cd(AnalysisParameters.RawDataDirectory)
-SessID = size(SessionLUT.SessID,1)+1;
+SessIDcounter = size(SessionLUT.SessID,1)+1;
 AnalyseCounter = 1;
 
 for m = 1:length(AnalysisParameters.Mice)
@@ -60,9 +100,10 @@ for m = 1:length(AnalysisParameters.Mice)
                         AnalyseDataDets.DataPath{AnalyseCounter} = SessDir;
                         AnalyseDataDets.LogfilePath{AnalyseCounter} = fullfile(logPath.folder, logPath.name);
                         AnalyseDataDets.Mouse{AnalyseCounter} = jsonData.subject;
-                        AnalyseDataDets.SessID(AnalyseCounter) = SessID;
+                        AnalyseDataDets.SessID(AnalyseCounter) = SessIDcounter;
                         
                         % Fill in SessionLUT SessID, MouseName, MouseSessID, LogfileName, Date, DataPath, LogfilePath
+                        SessID = SessIDcounter;
                         MouseName = cellstr(AnalysisParameters.Mice{m});
                         MouseSessID = MouseCounter;
                         LogfileName = jsonData.logfile;
@@ -75,7 +116,7 @@ for m = 1:length(AnalysisParameters.Mice)
                         LogfilePath = cellstr(fullfile(logPath.folder, logPath.name));
                         tmptable = table(SessID, MouseName, MouseSessID, LogfileName, Date, DataPath, LogfilePath);
                         SessionLUT = [SessionLUT; tmptable]; %#ok<AGROW>
-                        SessID = SessID + 1;
+                        SessIDcounter = SessIDcounter + 1;
                         MouseCounter = MouseCounter +1;
                         AnalyseCounter = AnalyseCounter +1;
                         
@@ -92,8 +133,6 @@ end
 %% Save the SessionLUT
 
 save(AnalysisParameters.SessionLUTPath, 'SessionLUT')
-cd(AnalysisParameters.ScriptsDir)
-
 
 end
 

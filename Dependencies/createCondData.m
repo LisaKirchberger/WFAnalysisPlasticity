@@ -10,9 +10,6 @@ for s = AnalyseDataDets.SessID
     load(AnalysisParameters.CondLUTPath)
     load(AnalyseDataDets.LogfilePath{s})
     
-    Mouse = char(SessionLUT.MouseName(s));
-    
-    
     %% Conditions
     
     CondID = size(CondLUT,1)+1;
@@ -26,7 +23,7 @@ for s = AnalyseDataDets.SessID
         wantedTrials = TrialLUT.TrialID(TrialLUT.SessID == s & TrialLUT.TrialCond == c);
         
         % CondData = 400 x 400 x Time x Trials
-        CondData = nan(AnalysisParameters.Pix,AnalysisParameters.Pix,length(AnalysisParameters.Timeline),length(wantedTrials));
+        CondData = nan(AnalysisParameters.Pix,AnalysisParameters.Pix,length(AnalysisParameters.Timeline),length(wantedTrials), 'single');
         
         % load in Data and put in CondData
         for t = 1:length(wantedTrials)
@@ -41,7 +38,7 @@ for s = AnalyseDataDets.SessID
         dFF = (CondData - repmat(TrialBase,[1,1,length(AnalysisParameters.Timeline),1]))./repmat(TrialBase,[1,1,length(AnalysisParameters.Timeline),1]);
         
         % take the average
-        Cond_dFF_avg = nanmean(dFF,4);
+        Cond_dFF_avg = squeeze(nanmean(dFF,4)); %#ok<NASGU>
         
         clear TrialBase dFF
         
@@ -73,7 +70,7 @@ for s = AnalyseDataDets.SessID
         Cond = c;
         TrialIDs = mat2cell(wantedTrials, length(wantedTrials));
         SessID = s;
-        MouseName = cellstr(Mouse);
+        MouseName = SessionLUT.MouseName(s);
         MouseSessID = SessionLUT.MouseSessID(s);
         LogfileName = SessionLUT.LogfileName(s);
         Date = SessionLUT.Date(s);
