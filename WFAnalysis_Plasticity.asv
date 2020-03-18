@@ -39,11 +39,10 @@ createTrialData(AnalyseDataDets,AnalysisParameters)
 %% Create Condition Data
 createCondData(AnalyseDataDets,AnalysisParameters)
 
-%% Create Timecourses for the different conditions
-createCondTimecourseTable(AnalyseDataDets, AnalysisParameters)
-
 %% Analyse the Data & make plots
+AnalysisParameters.PlotFigures = 'off';
 makeCondVideos(AnalyseDataDets, AnalysisParameters)
 
-%% Plot some timecourses
-plotTimecourses(AnalyseDataDets, AnalysisParameters)
+%%
+createCondTimecourseTable(AnalyseDataDets, AnalysisParameters)
+

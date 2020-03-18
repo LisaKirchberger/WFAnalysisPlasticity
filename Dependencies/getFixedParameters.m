@@ -17,6 +17,8 @@ AnalysisParameters.VideoPath = [AnalysisParameters.DataDirectory AnalysisParamet
 AnalysisParameters.SessionLUTPath = [AnalysisParameters.DataDirectory AnalysisParameters.Task '\SessionLUT.mat'];
 AnalysisParameters.TrialLUTPath = [AnalysisParameters.DataDirectory AnalysisParameters.Task '\TrialLUT.mat'];
 AnalysisParameters.CondLUTPath = [AnalysisParameters.DataDirectory AnalysisParameters.Task '\CondLUT.mat'];
+AnalysisParameters.CondTimecourseTablePath = [AnalysisParameters.DataDirectory AnalysisParameters.Task '\CondTimecourseTable.mat'];
+
 
 % other unimportant paramters, should just stay the same
 AnalysisParameters.useImType = 'tiff';

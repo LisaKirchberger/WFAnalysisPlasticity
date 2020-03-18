@@ -21,6 +21,9 @@ if AnalysisParameters.OverwriteData == 1 || ~exist(AnalysisParameters.SessionLUT
     % create an empty Condition Lookup table
     CondLUT = table();
     save(AnalysisParameters.CondLUTPath, 'CondLUT')
+    % create an empty condition timecourse table
+    CondTimecourseTable = table();
+    save(AnalysisParameters.CondTimecourseTablePath, 'CondTimecourseTable')
 end
 
 

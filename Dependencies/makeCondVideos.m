@@ -1,4 +1,4 @@
-function makeVideos_EasyOptoDetection_PassiveMultiLaser(AnalyseDataDets,AnalysisParameters)
+function makeCondVideos(AnalyseDataDets,AnalysisParameters)
 
 %% load in the Trial & Condition % Session LUT
 
@@ -30,13 +30,12 @@ for s = AnalyseDataDets.SessID
     
     %% Remove pixels outside of the Allen Brain Model
     
-    BrainBoundaries = [Model.Boundaries{strcmp(Model.Rnames, 'CTXpl')} Model.Boundaries{strcmp(Model.Rnames, 'SCs')}];
-    removepix = true(AnalysisParameters.Pix,AnalysisParameters.Pix);
-    for b = 1:length(BrainBoundaries)
-        removepix(poly2mask(BrainBoundaries{b}(:,1),BrainBoundaries{b}(:,2),AnalysisParameters.Pix,AnalysisParameters.Pix)) = 0;
+    BrainBoundary = [Model.Boundary{strcmp(Model.AreaName, 'CTXpl')}; Model.Boundary{strcmp(Model.AreaName, 'SCs')}];
+    BrainMask = false(AnalysisParameters.Pix,AnalysisParameters.Pix);
+    for b = 1:length(BrainBoundary)
+        BrainMask(poly2mask(BrainBoundary{b}(:,1),BrainBoundary{b}(:,2),AnalysisParameters.Pix,AnalysisParameters.Pix)) = true;
     end
     alphaVal = 0.5;
-    BrainMask = ~removepix;
     BrainMaskShade = BrainMask-BrainMask.*alphaVal;
     
     
@@ -50,7 +49,7 @@ for s = AnalyseDataDets.SessID
         load(fullfile(AnalysisParameters.CondWFDataPath, sprintf('CondID_%d.mat', c)), 'Cond_dFF_avg')
         
         
-        %% average over trials and show a movie
+        %% Plot the average dFF of this condition
         
         lims = [quantile(Cond_dFF_avg(:),0.01) quantile(Cond_dFF_avg(:),0.99)];
         lims = [-max(abs(lims)) max(abs(lims))];

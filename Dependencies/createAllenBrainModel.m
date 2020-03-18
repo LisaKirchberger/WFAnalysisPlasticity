@@ -1,112 +1,72 @@
 function createAllenBrainModel(AnalysisParameters)
 
+%% Read in the Screenshots of the Allen Brain Map and create masks for each region
 
 folder = fullfile(AnalysisParameters.AllenBrainModelDir, 'AllenBrainImages');
-
-%First screenshot is whole brain, all others are regions
-listscrshts = dir(fullfile(folder,'*tif'));
-
-Region =cell(length(listscrshts),1);
-Rnames = Region;
-for i = 1:length(Region)
-    filename = listscrshts(i).name; 
-    A = imread(fullfile(folder,filename));
-    B = imread(fullfile(folder,'Template\Template.tif'));
-    C_RGB = A-B;
-    C_GRAY = rgb2gray(C_RGB);
-    C_BW = logical(C_GRAY);
-    C_BW(1:38,1:38) = 0;
-    Region{i}=C_BW;
-    tmp = strsplit(filename, '.tif');
-    Rnames{i} = tmp{1};
+AllenImages = dir(fullfile(folder,'*tif'));
+Area = cell(length(AllenImages),1);
+AreaName = cell(length(AllenImages),1);
+for i = 1:length(Area)
+    Image = imread(fullfile(folder,AllenImages(i).name));
+    TemplateImage = imread(fullfile(folder,'Template\Template.tif'));
+    Area_RGB = Image-TemplateImage;
+    Area_grey = rgb2gray(Area_RGB);
+    Area_mask = logical(Area_grey); Area_mask(1:38,1:38) = 0;
+    Area{i}= Area_mask;
+    rescaledArea = strsplit(AllenImages(i).name, '.tif');
+    AreaName{i} = rescaledArea{1};
 end
 
 
-xpix = size(A,1);
-ypix = size(A,2);
+%% Rescale the masks to the size of our widefield images (so they have the same pixel numbers)
 
-RescaleX = (800*AnalysisParameters.ScaleFact)/xpix;
-RescaleY = (800*AnalysisParameters.ScaleFact)/ypix;
-
-
-Boundary=[];
-RegionNew = cell(length(Region),1);
-for i = 1:length(Region)
-    Boundary{i} = bwboundaries(Region{i});  %#ok<*AGROW>
+RescaleX = (AnalysisParameters.Pix)/size(Image,1);
+RescaleY = (AnalysisParameters.Pix)/size(Image,2);
+Boundary = cell(length(Area),1);
+for i = 1:length(Area)
+    % determine the boundary around the area
+    Boundary{i} = bwboundaries(Area{i}); 
     if length(Boundary{i}) > 5
-        Region{i} = bwmorph(Region{i},'branchpoints',5);
+        Area{i} = bwmorph(Area{i},'branchpoints',5);
+        Boundary{i} = bwboundaries(Area{i});
     end
-    Boundary{i} = bwboundaries(Region{i}); 
-    tmp = false(round(xpix*RescaleX),round(ypix*RescaleY));
+    % rescale the boundary & area to fit the widefield images
+    rescaledArea = false(AnalysisParameters.Pix,AnalysisParameters.Pix);
     for j = 1:length(Boundary{i})
         Boundary{i}{j}(:,2) = round(Boundary{i}{j}(:,2) .* RescaleX);
         Boundary{i}{j}(:,1) = round(Boundary{i}{j}(:,1) .* RescaleY);
-        tmp(poly2mask(Boundary{i}{j}(:,2),Boundary{i}{j}(:,1),round(xpix.*RescaleX),round(ypix.*RescaleY)))=1;
+        rescaledArea(poly2mask(Boundary{i}{j}(:,2),Boundary{i}{j}(:,1),AnalysisParameters.Pix,AnalysisParameters.Pix))=1;
     end
-    RegionNew{i} = tmp;
-    
+    Area{i} = rescaledArea;
 end
-Region = RegionNew;
-clear RegionNew
-xpix = round(xpix.*RescaleX);
-ypix = round(ypix.*RescaleY);
-cortex = zeros(xpix,ypix);
-
-for i = 1:length(Region)
-    cortex = cortex+Region{i};
-end
-figure;imagesc(cortex);axis square;colormap gray;set(gca,'TickDir','out')
 
 
-Black = zeros(xpix,ypix);
-imshow(Black);
+%% reshape Boundary so that it is more easy to plot & make vector with all boundaries
+
 AllX = [];AllY = [];
-hold on
 for n = 1:length(Boundary)
-    for k=1:length(Boundary{n})
+    for k = 1:length(Boundary{n})
         X = Boundary{n}{k}(:,2);
         Y = Boundary{n}{k}(:,1);
-        NewBoundary{n}{k}(:,1) = X; 
-        NewBoundary{n}{k}(:,2) = Y; 
-        
-        plot(X,Y,'w','Linewidth',1)
-        AllX = [AllX;X]; 
-        AllY = [AllY;Y]; 
+        Boundary{n}{k} = [];
+        Boundary{n}{k}(:,1) = X;
+        Boundary{n}{k}(:,2) = Y;
+        AllX = [AllX;X]; %#ok<*AGROW>
+        AllY = [AllY;Y];
     end
 end
-hold off
 
-% Estimated Values
-BregmaX = 169;
-LambdaX = 337;
-BregmaY = 200;
-LambdaY = 200;
 
-AllX = [AllX;BregmaX;LambdaX];
-AllY = [AllY;BregmaY;LambdaY];
 [AllX,ind] = sort(AllX);
 AllY = AllY(ind);
-plot(AllX,AllY,'k.','MarkerSize',5)
-hold on
-plot(BregmaX,BregmaY,'r*')
-plot(LambdaX,LambdaY,'r*')
-F = getframe;
-I_uint8 = F.cdata(:,:,1);
-I_temp = I_uint8/255;
-I=logical(I_temp);
-imshow(I)
 
 Model = [];
+Model.AreaName = AreaName;
+Model.Boundary = Boundary;
+Model.AreaMask = Area;
 Model.AllX = AllX;
 Model.AllY = AllY;
-Model.Boundaries = NewBoundary;
-Model.Regions = Region;
-Model.EmptyCortex = [];
-Model.WholeCortex = I;
-Model.Lambda = [LambdaX, LambdaY];
-Model.Bregma = [BregmaX,BregmaY];
-Model.Rnames = Rnames;
-
 
 save(fullfile(AnalysisParameters.AllenBrainModelDir,'AllenBrainModel'),'Model')
+
 end
