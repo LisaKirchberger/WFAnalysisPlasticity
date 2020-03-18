@@ -14,6 +14,7 @@ AnalysisParameters.TrialWFDataPath = [AnalysisParameters.DataDirectory AnalysisP
 AnalysisParameters.CondWFDataPath = [AnalysisParameters.DataDirectory AnalysisParameters.Task '\CondWFData'];
 AnalysisParameters.RefImgPath = [AnalysisParameters.DataDirectory AnalysisParameters.Task '\RefImg'];
 AnalysisParameters.VideoPath = [AnalysisParameters.DataDirectory AnalysisParameters.Task '\Videos'];
+AnalysisParameters.TimecoursePlotPath = [AnalysisParameters.DataDirectory AnalysisParameters.Task '\TimecoursePlots'];
 AnalysisParameters.SessionLUTPath = [AnalysisParameters.DataDirectory AnalysisParameters.Task '\SessionLUT.mat'];
 AnalysisParameters.TrialLUTPath = [AnalysisParameters.DataDirectory AnalysisParameters.Task '\TrialLUT.mat'];
 AnalysisParameters.CondLUTPath = [AnalysisParameters.DataDirectory AnalysisParameters.Task '\CondLUT.mat'];

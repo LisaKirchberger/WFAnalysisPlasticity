@@ -45,31 +45,10 @@ for s = AnalyseDataDets.SessID
             eval([Model.AreaName{a} '=' 'AreaResponse;'])
         end
         
-        %% some additional Timecourses
-        
-        additionalAreas = {'VIS', 'SS', 'AUD', 'MO'};
-        
-        for addA = 1:length(additionalAreas)
-            wantedAreas = find(~cellfun(@isempty, regexp(Model.AreaName, additionalAreas{addA}, 'match') ));
-            myMask = false(AnalysisParameters.Pix,AnalysisParameters.Pix);
-            for a = wantedAreas'
-                for b = 1:length(Model.Boundary{a})
-                    myMask(poly2mask(Model.Boundary{a}{b}(:,1),Model.Boundary{a}{b}(:,2),AnalysisParameters.Pix,AnalysisParameters.Pix)) = true;
-                end
-            end
-            numPixels = sum(sum(myMask));
-            myMask = repmat(myMask,[1,1,Timepoints]);
-            AreaPixelResponse = Cond_dFF_avg(myMask);
-            AreaPixelResponse = reshape(AreaPixelResponse, [numPixels, Timepoints]);
-            AreaResponse = nanmean(AreaPixelResponse,1); %#ok<NASGU>
-            eval([additionalAreas{addA} '=' 'AreaResponse;'])
-        end
-
-        
         %% store the timecourses in the table (CondTimecourseTable)
         
         CondID = c;
-        TableVars = ['CondID, ' sprintf('%s, ', Model.AreaName{:}) sprintf('%s, ', additionalAreas{1:end-1}) additionalAreas{end}];
+        TableVars = ['CondID, ' sprintf('%s, ', Model.AreaName{1:end-1}) Model.AreaName{end}];
         eval(['tmptable = table(' TableVars ');'])
         CondTimecourseTable = [CondTimecourseTable; tmptable]; %#ok<AGROW>
         clear tmptable

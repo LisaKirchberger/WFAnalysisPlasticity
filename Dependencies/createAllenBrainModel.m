@@ -56,9 +56,30 @@ for n = 1:length(Boundary)
     end
 end
 
-
 [AllX,ind] = sort(AllX);
 AllY = AllY(ind);
+
+%% add additional Areas
+
+additionalAreas = {'VIS', 'SS', 'AUD', 'MO'};
+for addA = 1:length(additionalAreas)
+    wantedAreas = find(~cellfun(@isempty, regexp(AreaName, additionalAreas{addA}, 'match') ));
+    Boundaries = [];
+    for a = wantedAreas'
+        Boundaries = [Boundaries; Boundary{a}];
+    end
+    myMask = false(AnalysisParameters.Pix,AnalysisParameters.Pix);
+    for b = 1:length(Boundaries)
+        myMask(poly2mask(Boundaries{b}(:,1),Boundaries{b}(:,2),AnalysisParameters.Pix,AnalysisParameters.Pix)) = true;
+    end
+    AreaNum = size(AreaName,1);
+    AreaName{AreaNum+1} = additionalAreas{addA};
+    Boundary{AreaNum+1} = Boundaries;
+    Area{AreaNum+1} = myMask;
+end
+
+
+%% fill the model & save it
 
 Model = [];
 Model.AreaName = AreaName;

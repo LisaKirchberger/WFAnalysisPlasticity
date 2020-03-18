@@ -20,6 +20,10 @@ if AnalysisParameters.OverwriteData == 1
     if exist(AnalysisParameters.VideoPath, 'dir')
         rmdir(AnalysisParameters.VideoPath, 's')
     end
+    % Folder for the timecourse plots
+    if exist(AnalysisParameters.TimecoursePlotPath, 'dir')
+        rmdir(AnalysisParameters.TimecoursePlotPath, 's')
+    end
 end
 
 if ~exist([AnalysisParameters.DataDirectory AnalysisParameters.Task], 'dir')
@@ -40,6 +44,10 @@ end
 
 if ~exist(AnalysisParameters.VideoPath, 'dir')
     mkdir(AnalysisParameters.VideoPath)
+end
+
+if ~exist(AnalysisParameters.TimecoursePlotPath, 'dir')
+    mkdir(AnalysisParameters.TimecoursePlotPath)
 end
 
 end
