@@ -92,7 +92,7 @@ for s = AnalyseDataDets.SessID
         myVideo = VideoWriter(videoname);
         myVideo.FrameRate = 5;
         open(myVideo)
-        for t = 1:length(AnalysisParameters.Timeline)
+        for t = 1:length(AnalysisParameters.Timeline)-3
             if any(any(~isnan(Cond_dFF_avg(:,:,t))))
                 fh = figure('visible', 'off','units','normalized');
                 im = imagesc(RefImage);colormap gray;

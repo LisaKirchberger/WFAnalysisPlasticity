@@ -105,7 +105,7 @@ for m = 1:length(Mice)
             for c = 1:length(CondIDs{s})
                 myRow = find(CondTimecourseTable.CondID == CondIDs{s}(c)); %#ok<NASGU>
                 eval(['timecourse = CondTimecourseTable.' Area '(myRow,:);'])
-                plot(AnalysisParameters.Timeline./1000, timecourse, 'Color', Colors(c,:), 'LineWidth', 1)
+                plot(AnalysisParameters.Timeline./1000, timecourse, 'Color', Colors(c,:), 'LineWidth', 1.5)
             end
             box off
             xlabel('Time (s)')
