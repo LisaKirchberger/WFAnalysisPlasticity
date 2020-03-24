@@ -1,4 +1,4 @@
-function alignAllenBrainMap(AnalyseDataDets,AnalysisParameters)
+function alignAllenBrainMap_fJoe(AnalyseDataDets,AnalysisParameters)
 
 %% This script aligns a reference brain image to the Allen Brain Map
 
@@ -23,83 +23,6 @@ for M = 1:size(AnalysisParameters.Mice,2)
 
     
     
-    
-    %% If Data is already present, just show it
-    
-    if exist(BrainModelFileMouse, 'file') && RedoAlignment_Mouse == 0 && strcmp(AnalysisParameters.PlotFigures, 'on')
-        
-        %% Load in mouse specific AllenBrainModel and the pRF reference image
-        
-        load(BrainModelFileMouse)
-        pRFfile = fullfile(AnalysisParameters.pRFMappingDir,Mouse,'pRFmaps');
-        load(pRFfile)
-        
-        
-        %% Adjust pRF output
-        
-        %Interpolate and threshold using the r value
-        rthresh = 0.65;
-        % Azimuth
-        AZIit = AZIi;
-        AZIit(CRFi<rthresh) = NaN;
-        % Elevation
-        ELEit = ELEi;
-        ELEit(CRFi<rthresh) = NaN;
-        % pRF
-        PRFit = PRFi;
-        PRFit(CRFi<rthresh) = NaN;
-        % FSM
-        SIGNMAPp = out.SIGNMAPp;
-        SIGNMAPp(~SIGNMAPp) = NaN;
-        SIGNMAPp(CRFi<rthresh) = NaN;
-        
-        
-        %% Adjust sizes of reference image and pRF output
-        
-        if size(AZIit,2) ~= size(brain,1)
-            AZIit = cat(2,nan(size(AZIit,1),size(brain,2)-size(AZIit,2)),AZIit);
-            ELEit = cat(2,nan(size(ELEit,1),size(brain,2)-size(ELEit,2)),ELEit);
-            PRFit = cat(2,nan(size(PRFit,1),size(brain,2)-size(PRFit,2)),PRFit);
-            SIGNMAPp = cat(2,nan(size(SIGNMAPp,1),size(brain,2)-size(SIGNMAPp,2)),SIGNMAPp);
-        end
-        
-        if size(AZIit,1) ~= size(brain,1)
-            AZIit = imresize(AZIit,AnalysisParameters.ScaleFact);
-            ELEit = imresize(ELEit,AnalysisParameters.ScaleFact);
-            PRFit = imresize(PRFit,AnalysisParameters.ScaleFact);
-            SIGNMAPp = imresize(SIGNMAPp,AnalysisParameters.ScaleFact);
-            out.SIGNMAPt = imresize(out.SIGNMAPt,AnalysisParameters.ScaleFact);
-            sq2brain = 1:AnalysisParameters.Pix*AnalysisParameters.Pix;
-        end
-        
-        
-        %% plot the pRF results with the Allen Brain Map
-        
-        figure('Name', Mouse, 'Units','normalized','Position',[0 0 0.9 0.9], 'visible', AnalysisParameters.PlotFigures)
-        suptitle(Mouse)
-        h1 = subplot(3,4,1);imagesc(brain); colormap('gray'); freezeColors; colormap('jet'); hold on; tmp = imgaussfilt(AZIit,2,'FilterDomain','spatial'); h = imagesc(tmp,[quantile(tmp(~isnan(tmp)),0.01) quantile(tmp(~isnan(tmp)),0.99)]); set(h,'AlphaData',~isnan(imgaussfilt(AZIit,2,'FilterDomain','spatial')));axis square
-        h2 = subplot(3,4,5);imagesc(brain); colormap('gray'); freezeColors; colormap('jet'); hold on; tmp = imgaussfilt(ELEit,2,'FilterDomain','spatial'); h = imagesc(tmp,[quantile(tmp(~isnan(tmp)),0.01) quantile(tmp(~isnan(tmp)),0.99)]); set(h,'AlphaData',~isnan(imgaussfilt(AZIit,2,'FilterDomain','spatial')));axis square
-        h3 = subplot(3,4,9);imagesc(brain); colormap('gray'); freezeColors; colormap('jet'); hold on; tmp = imgaussfilt(PRFit,2,'FilterDomain','spatial'); h = imagesc(tmp,[quantile(tmp(~isnan(tmp)),0.01) quantile(tmp(~isnan(tmp)),0.99)]); set(h,'AlphaData',~isnan(imgaussfilt(AZIit,2,'FilterDomain','spatial')));axis square
-        h4 = subplot(3,4,[2 3 4 6 7 8 10 11 12]);imagesc(brain); colormap('gray'); freezeColors; colormap('jet'); hold on; tmp = imgaussfilt(out.SIGNMAPp,2,'FilterDomain','spatial'); h = imagesc(tmp,[quantile(tmp(~isnan(tmp)),0.01) quantile(tmp(~isnan(tmp)),0.99)]); set(h,'AlphaData',~isnan(imgaussfilt(AZIit,2,'FilterDomain','spatial')));axis square
-        
-        if exist('Allen','var')
-            subplot(h1),h5 = scatter(Allen(:,1),Allen(:,2),'k.');axis square %#ok<*NASGU>
-            subplot(h2),h6 = scatter(Allen(:,1),Allen(:,2),'k.');axis square
-            subplot(h3),h7 = scatter(Allen(:,1),Allen(:,2),'k.');axis square
-            subplot(h4),h8 = scatter(Allen(:,1),Allen(:,2),'k.');axis square
-        else
-            RedoAlignment_Mouse = 1;
-        end
-    end
-    
-    
-    
-    
-    
-    
-    
-    
-    
     %% If the AllenBrainModel does not yet exist or we want to redo the alignment, align the Allen Brain Map to the reference image (manual step!)
     
     if ~exist(BrainModelFileMouse, 'file') || RedoAlignment_Mouse
@@ -107,48 +30,14 @@ for M = 1:size(AnalysisParameters.Mice,2)
         %% Load the general AllenBrainModel and the pRF reference image
         
         load(fullfile(AnalysisParameters.AllenBrainModelDir,'AllenBrainModel.mat')) %#ok<*LOAD>
+        
+        % here you should load in whichever image you want to use for alignment:
         pRFfile = fullfile(AnalysisParameters.pRFMappingDir,Mouse,'pRFmaps');
         load(pRFfile)
       
         
-        %% Adjust pRF output
         
-        %Interpolate and threshold using the r value
-        rthresh = 0.65;
-        % Azimuth
-        AZIit = AZIi;
-        AZIit(CRFi<rthresh) = NaN;
-        % Elevation
-        ELEit = ELEi;
-        ELEit(CRFi<rthresh) = NaN;
-        % pRF
-        PRFit = PRFi;
-        PRFit(CRFi<rthresh) = NaN;
-        % FSM
-        SIGNMAPp = out.SIGNMAPp;
-        SIGNMAPp(~SIGNMAPp) = NaN;
-        SIGNMAPp(CRFi<rthresh) = NaN;
-        
-        
-        %% Adjust sizes of reference image and pRF output
-        
-        if size(AZIit,2) ~= size(brain,1)
-            AZIit = cat(2,nan(size(AZIit,1),size(brain,2)-size(AZIit,2)),AZIit);
-            ELEit = cat(2,nan(size(ELEit,1),size(brain,2)-size(ELEit,2)),ELEit);
-            PRFit = cat(2,nan(size(PRFit,1),size(brain,2)-size(PRFit,2)),PRFit);
-            SIGNMAPp = cat(2,nan(size(SIGNMAPp,1),size(brain,2)-size(SIGNMAPp,2)),SIGNMAPp);
-        end
-        
-        if size(AZIit,1) ~= size(brain,1)
-            AZIit = imresize(AZIit,AnalysisParameters.ScaleFact);
-            ELEit = imresize(ELEit,AnalysisParameters.ScaleFact);
-            PRFit = imresize(PRFit,AnalysisParameters.ScaleFact);
-            SIGNMAPp = imresize(SIGNMAPp,AnalysisParameters.ScaleFact);
-            out.SIGNMAPt = imresize(out.SIGNMAPt,AnalysisParameters.ScaleFact);
-            sq2brain = 1:AnalysisParameters.Pix*AnalysisParameters.Pix;
-        end
-        
-        %% plot the pRF results 
+        %% plot the pRF results (or the images you want to align to --> this could also be 1 image instead of 4 like we plot, then only plot h1)
         
         figure('Name', Mouse, 'Units','normalized','Position',[0 0 0.9 0.9])
         suptitle(Mouse)
@@ -158,7 +47,7 @@ for M = 1:size(AnalysisParameters.Mice,2)
         h4 = subplot(3,4,[2 3 4 6 7 8 10 11 12]);imagesc(brain); colormap('gray'); freezeColors; colormap('jet'); hold on; tmp = imgaussfilt(out.SIGNMAPp,2,'FilterDomain','spatial'); h = imagesc(tmp,[quantile(tmp(~isnan(tmp)),0.01) quantile(tmp(~isnan(tmp)),0.99)]); set(h,'AlphaData',~isnan(imgaussfilt(AZIit,2,'FilterDomain','spatial')));axis square
         
         
-        %% plot the Allen Brain Map and manually adjust
+        %% plot the Allen Brain Map (not yet aligned) and manually adjust
         
         suptitle('a = left, d = right, s = down, w = up, f/g = xscale down/up, v/b = yscale down/up, k for okay')
         
@@ -230,7 +119,8 @@ for M = 1:size(AnalysisParameters.Mice,2)
         end
         
         
-        %% Apply the shift to Bregma
+        %% Apply the shift to Bregma (!!! I'm not actually sure this Bregma position is correct,...
+        ...don't use it for anything! I only use it to split the brain in half down the midline, for that it's accurate)
         
         Model.Bregma(1) = round((Model.Bregma(1) - Model.shiftX) ./ Model.scaleX);
         Model.Bregma(2) = round((Model.Bregma(2) - Model.shiftY) ./ Model.scaleY);
@@ -247,7 +137,7 @@ for M = 1:size(AnalysisParameters.Mice,2)
         end
         
         
-        %% Make Boundaries for left and right hemisphere
+        %% Make Boundaries & masks for left and right hemisphere
         
         for i = 1:length(Model.Boundary)
             MaskR = false(AnalysisParameters.Pix,AnalysisParameters.Pix);
@@ -271,7 +161,8 @@ for M = 1:size(AnalysisParameters.Mice,2)
         
         %% save the Allen Brain Model for this mouse
         
-        save(BrainModelFileMouse,'Model','SIGNMAPp','PRFit','ELEit','AZIit')
+        save(BrainModelFileMouse,'Model')
+        % and save the figure
         BrainModelFigFile =  fullfile(AnalysisParameters.AllenBrainModelDir, [Mouse '_BrainAreaModel']);
         saveas(gcf,BrainModelFigFile,'fig')
         

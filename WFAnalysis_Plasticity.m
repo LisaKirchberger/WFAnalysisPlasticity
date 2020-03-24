@@ -8,7 +8,7 @@ AnalysisParameters.Project = 'Mouse_Plasticity';
 AnalysisParameters.Mice = {'Fergon'};                                       % {'Arja','Bran','Fergon', 'Hodor'};                                                           
 AnalysisParameters.Task ='EasyOptoDetection_PassiveMultiLaser';
 
-AnalysisParameters.OverwriteData = 1;
+AnalysisParameters.OverwriteData = 0;
 AnalysisParameters.RedoAllenBrainAlignment = 0;
 AnalysisParameters.RedoRegistration = 0;
 AnalysisParameters.PlotFigures = 'off';

@@ -9,9 +9,9 @@ function AnalyseDataDets = gatherDataInfo(AnalysisParameters)
 
 AnalyseDataDets.DataPath = [];
 AnalyseDataDets.LogfilePath = [];
-AnalyseDataDets.Mouse = [];
-AnalyseDataDets.SessID = [];
-AnalyseDataDets.MouseSessID = [];
+AnalyseDataDets.Mouse = jsonData.subject;
+AnalyseDataDets.SessID = SessID;
+AnalyseDataDets.MouseSessID = MouseSessID;
                         
 
 %% if want to overwrite all Data, create an empty SessionLUT and Delete the currently present preprocessed Data

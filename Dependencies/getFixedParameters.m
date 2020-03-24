@@ -10,15 +10,15 @@ AnalysisParameters.DataDirectory = '\\vs02\VandC\BU\Lisa\ppData\';
 AnalysisParameters.pRFMappingDir = '\\vs02\VandC\BU\Lisa\pRFData\';
 AnalysisParameters.AllenBrainModelDir = '\\vs02\VandC\BU\Lisa\ppData\AllenBrainAlignment';
 AnalysisParameters.LocalFolder = 'E:\Lisa\';
-AnalysisParameters.TrialWFDataPath = [AnalysisParameters.DataDirectory AnalysisParameters.Task '\TrialWFData'];
-AnalysisParameters.CondWFDataPath = [AnalysisParameters.DataDirectory AnalysisParameters.Task '\CondWFData'];
-AnalysisParameters.RefImgPath = [AnalysisParameters.DataDirectory AnalysisParameters.Task '\RefImg'];
-AnalysisParameters.VideoPath = [AnalysisParameters.DataDirectory AnalysisParameters.Task '\Videos'];
-AnalysisParameters.TimecoursePlotPath = [AnalysisParameters.DataDirectory AnalysisParameters.Task '\TimecoursePlots'];
-AnalysisParameters.SessionLUTPath = [AnalysisParameters.DataDirectory AnalysisParameters.Task '\SessionLUT.mat'];
-AnalysisParameters.TrialLUTPath = [AnalysisParameters.DataDirectory AnalysisParameters.Task '\TrialLUT.mat'];
-AnalysisParameters.CondLUTPath = [AnalysisParameters.DataDirectory AnalysisParameters.Task '\CondLUT.mat'];
-AnalysisParameters.CondTimecourseTablePath = [AnalysisParameters.DataDirectory AnalysisParameters.Task '\CondTimecourseTable.mat'];
+AnalysisParameters.TaskDataPath = [AnalysisParameters.DataDirectory AnalysisParameters.Task];
+AnalysisParameters.TrialWFDataPath = [AnalysisParameters.TaskDataPath '\TrialWFData'];
+AnalysisParameters.CondWFDataPath = [AnalysisParameters.TaskDataPath '\CondWFData'];
+AnalysisParameters.RefImgPath = [AnalysisParameters.TaskDataPath '\RefImg'];
+AnalysisParameters.VideoPath = [AnalysisParameters.TaskDataPath '\Videos'];
+AnalysisParameters.TimecoursePlotPath = [AnalysisParameters.TaskDataPath '\TimecoursePlots'];
+AnalysisParameters.SessionLUTPath = [AnalysisParameters.TaskDataPath '\SessionLUT.mat'];
+AnalysisParameters.TrialLUTPath = [AnalysisParameters.TaskDataPath '\TrialLUT.mat'];
+AnalysisParameters.CondLUTPath = [AnalysisParameters.TaskDataPath '\CondLUT.mat'];
 
 
 % other unimportant paramters, should just stay the same

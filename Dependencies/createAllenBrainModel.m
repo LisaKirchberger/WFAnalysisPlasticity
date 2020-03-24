@@ -41,7 +41,7 @@ for i = 1:length(Area)
 end
 
 
-%% reshape Boundary so that it is more easy to plot & make vector with all boundaries
+%% reshape Boundary so that it is more easy to plot & make vector with all boundaries called AllX and AllY
 
 AllX = [];AllY = [];
 for n = 1:length(Boundary)
@@ -87,7 +87,7 @@ Model.Boundary = Boundary;
 Model.AreaMask = Area;
 Model.AllX = AllX;
 Model.AllY = AllY;
-
+Model.Bregma = [169 200]; %estimated values x and y
 save(fullfile(AnalysisParameters.AllenBrainModelDir,'AllenBrainModel'),'Model')
 
 end
