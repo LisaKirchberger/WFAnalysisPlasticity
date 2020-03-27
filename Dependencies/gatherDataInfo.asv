@@ -9,17 +9,19 @@ function AnalyseDataDets = gatherDataInfo(AnalysisParameters)
 
 AnalyseDataDets.DataPath = [];
 AnalyseDataDets.LogfilePath = [];
-AnalyseDataDets.Mouse = jsonData.subject;
-AnalyseDataDets.SessID = SessID;
-AnalyseDataDets.MouseSessID = MouseSessID;
+AnalyseDataDets.RawEyeMotionPath = [];
+AnalyseDataDets.EyeMotionPath = [];
+AnalyseDataDets.Mouse = [];
+AnalyseDataDets.SessID = [];
+AnalyseDataDets.MouseSessID = [];
                         
 
 %% if want to overwrite all Data, create an empty SessionLUT and Delete the currently present preprocessed Data
 
 if AnalysisParameters.OverwriteData == 1 || ~exist(AnalysisParameters.SessionLUTPath, 'file')
     % create empty Session Lookup table
-    SessID = []; MouseName = []; MouseSessID = []; LogfileName = []; Date = []; DataPath = []; LogfilePath = [];
-    SessionLUT = table(SessID, MouseName, MouseSessID, LogfileName, Date, DataPath, LogfilePath);
+    SessID = []; MouseName = []; MouseSessID = []; LogfileName = []; Date = []; DataPath = []; LogfilePath = []; EyeMotionPresent = []; EyeMotionPath = [];
+    SessionLUT = table(SessID, MouseName, MouseSessID, LogfileName, Date, DataPath, LogfilePath, EyeMotionPresent, EyeMotionPath);
     save(AnalysisParameters.SessionLUTPath, 'SessionLUT')
     % create an empty Trial Lookup table
     TrialLUT = table(); %#ok<*NASGU>
@@ -32,6 +34,9 @@ if AnalysisParameters.OverwriteData == 1 || ~exist(AnalysisParameters.SessionLUT
     save(fullfile(AnalysisParameters.CondWFDataPath,'CondTimecourseTable.mat'), 'CondTimecourseTable')
     save(fullfile(AnalysisParameters.CondWFDataPath,'CondTimecourseTable_R.mat'), 'CondTimecourseTable')
     save(fullfile(AnalysisParameters.CondWFDataPath,'CondTimecourseTable_L.mat'), 'CondTimecourseTable')
+    % create an empty Eye and Motion Table
+    EyeMotionTable = table();
+    save(AnalysisParameters.EyeMotionTablePath, 'EyeMotionTable');
 end
 
 
@@ -71,6 +76,14 @@ for m = 1:length(AnalysisParameters.Mice)
                         logPath = dir([Sessions(s).name(1:end-1) '*.mat']);
                         AnalyseDataDets.DataPath{AnalyseCounter} = SessDir;
                         AnalyseDataDets.LogfilePath{AnalyseCounter} = fullfile(logPath.folder, logPath.name);
+                                TmpDir = strsplit(logPath.folder, 'RawData\');EyeMotionDir = [AnalysisParameters.RawEyeMotionDataDirectory TmpDir{end} '\'];EyeMotionPath = dir(fullfile(EyeMotionDir, '*.dat'));
+                        if ~isempty(EyeMotionPath)
+                            AnalyseDataDets.RawEyeMotionPath{AnalyseCounter} = fullfile(EyeMotionPath.folder, EyeMotionPath.name);
+                            AnalyseDataDets.EyeMotionPath{AnalyseCounter} = fullfile(logPath.folder, 'EyeMotionData.mat');
+                        else
+                            AnalyseDataDets.RawEyeMotionPath{AnalyseCounter} = [];
+                            AnalyseDataDets.EyeMotionPath{AnalyseCounter} = [];
+                        end
                         AnalyseDataDets.Mouse{AnalyseCounter} = jsonData.subject;
                         AnalyseDataDets.SessID(AnalyseCounter) = SessID;
                         AnalyseDataDets.MouseSessID(AnalyseCounter) = MouseSessID;
@@ -85,7 +98,14 @@ for m = 1:length(AnalysisParameters.Mice)
                         Date = cellstr(jsonData.date);
                         DataPath = cellstr(logPath.folder);
                         LogfilePath = cellstr(fullfile(logPath.folder, logPath.name));
-                        tmptable = table(SessID, MouseName, MouseSessID, LogfileName, Date, DataPath, LogfilePath);
+                        if ~isempty(AnalyseDataDets.RawEyeMotionPath{AnalyseCounter})
+                            EyeMotionPresent = 1;
+                            EyeMotionPath = AnalyseDataDets.EyeMotionPath(AnalyseCounter);
+                        else
+                            EyeMotionPresent = 0;
+                            EyeMotionPath{1} = [;
+                        end
+                        tmptable = table(SessID, MouseName, MouseSessID, LogfileName, Date, DataPath, LogfilePath, EyeMotionPresent, EyeMotionPath);
                         SessionLUT = [SessionLUT; tmptable]; %#ok<AGROW>
                         SessID = SessID + 1;
                         MouseSessID = MouseSessID + 1;

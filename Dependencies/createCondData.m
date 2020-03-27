@@ -38,8 +38,27 @@ for s = AnalyseDataDets.SessID
         TrialBase = nanmean(CondData(:,:,AnalysisParameters.Timeline>=-200 & AnalysisParameters.Timeline<0,:),3);
         dFF = (CondData - repmat(TrialBase,[1,1,length(AnalysisParameters.Timeline),1]))./repmat(TrialBase,[1,1,length(AnalysisParameters.Timeline),1]);
         
+        % remove bad trials
+        if AnalysisParameters.Trial_zscore
+            % take average over time
+            dFF_Trial = squeeze(nanmean(dFF,3));
+            % extract the brain pixels
+            Allenmodelpath = [AnalysisParameters.AllenBrainModelDir '\' AnalyseDataDets.Mouse{s} '_brainareamodel.mat'];
+            load(Allenmodelpath, 'Model')
+            Area = 'CTXpl';
+            myMask = repmat(Model.AreaMask{strcmp(Model.AreaName, Area)},[1,1,length(wantedTrials)]);
+            numPixels = sum(sum(Model.AreaMask{strcmp(Model.AreaName, Area)}));
+            AreaPixelResponse = dFF_Trial(myMask);
+            AreaPixelResponse = nanmean(reshape(AreaPixelResponse, [numPixels, length(wantedTrials)]),1);
+            % z-score the data and remove trials with a z-score >1.5 and <-1.5
+            Z = normalize(AreaPixelResponse);
+            includedTrials = ~(abs(Z)>1.5);
+        else
+            includedTrials = true(1,length(wantedTrials));
+        end
+            
         % take the average
-        Cond_dFF_avg = squeeze(nanmean(dFF,4)); %#ok<NASGU>
+        Cond_dFF_avg = squeeze(nanmean(dFF(:,:,:,includedTrials),4)); 
         
         clear TrialBase dFF
         
@@ -69,7 +88,8 @@ for s = AnalyseDataDets.SessID
         
         CondWord = TrialLUT.Trialword(wantedTrials(1));
         Cond = c;
-        TrialIDs = mat2cell(wantedTrials, length(wantedTrials));
+        TrialIDs = mat2cell(wantedTrials(includedTrials), length(wantedTrials(includedTrials)));
+        exclTrialIDs = mat2cell(wantedTrials(~includedTrials), length(wantedTrials(~includedTrials)));
         SessID = s;
         MouseName = SessionLUT.MouseName(s);
         MouseSessID = SessionLUT.MouseSessID(s);
@@ -77,7 +97,7 @@ for s = AnalyseDataDets.SessID
         Date = SessionLUT.Date(s);
         DataPath = SessionLUT.DataPath(s);
         LogfilePath = SessionLUT.LogfilePath(s);
-        tmptable = table(CondWord, Cond, CondID, TrialIDs, SessID, MouseName, MouseSessID, LogfileName, Date, DataPath, LogfilePath);
+        tmptable = table(CondWord, Cond, CondID, TrialIDs, exclTrialIDs, SessID, MouseName, MouseSessID, LogfileName, Date, DataPath, LogfilePath);
         CondLUT = [CondLUT; tmptable]; %#ok<AGROW>
         clear tmptable
         

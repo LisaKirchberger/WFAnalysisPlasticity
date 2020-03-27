@@ -6,6 +6,7 @@ function AnalysisParameters = getFixedParameters(AnalysisParameters)
 % AnalysisParameters.pRFMappingDir = '\\VC2NIN\Mouse_Plasticity\pRFData\';
 % AnalysisParameters.AllenBrainModelDir = '\\VC2NIN\Mouse_Plasticity\ppData\AllenBrainAlignment';
 AnalysisParameters.RawDataDirectory = '\\vs02\VandC\BU\Lisa\RawData\';
+AnalysisParameters.RawEyeMotionDataDirectory = [AnalysisParameters.RawDataDirectory 'EyeMotionData\'];
 AnalysisParameters.DataDirectory = '\\vs02\VandC\BU\Lisa\ppData\';
 AnalysisParameters.pRFMappingDir = '\\vs02\VandC\BU\Lisa\pRFData\';
 AnalysisParameters.AllenBrainModelDir = '\\vs02\VandC\BU\Lisa\ppData\AllenBrainAlignment';
@@ -19,14 +20,14 @@ AnalysisParameters.TimecoursePlotPath = [AnalysisParameters.TaskDataPath '\Timec
 AnalysisParameters.SessionLUTPath = [AnalysisParameters.TaskDataPath '\SessionLUT.mat'];
 AnalysisParameters.TrialLUTPath = [AnalysisParameters.TaskDataPath '\TrialLUT.mat'];
 AnalysisParameters.CondLUTPath = [AnalysisParameters.TaskDataPath '\CondLUT.mat'];
-
+AnalysisParameters.EyeMotionTablePath = [AnalysisParameters.TaskDataPath '\EyeMotionTable.mat'];
 
 % other unimportant paramters, should just stay the same
-AnalysisParameters.useImType = 'tiff';
+%AnalysisParameters.useImType = 'tiff';
 AnalysisParameters.ScaleFact = 0.5; 
 AnalysisParameters.Pix = 800*AnalysisParameters.ScaleFact;
 AnalysisParameters.SmoothFact = 0;    
-AnalysisParameters.AREAS = {'V1','Vl','Val','Vrl','Va','Vam','Vpm','RSP','M1','M2'};
+%AnalysisParameters.AREAS = {'V1','Vl','Val','Vrl','Va','Vam','Vpm','RSP','M1','M2'};
 AnalysisParameters.Exposure = 50;
 AnalysisParameters.Timeline = -AnalysisParameters.BaselineTime:AnalysisParameters.Exposure:AnalysisParameters.StimTime+AnalysisParameters.BaselineTime;
 
