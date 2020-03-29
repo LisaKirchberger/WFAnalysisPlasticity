@@ -79,11 +79,10 @@ for m = 1:length(AnalysisParameters.Mice)
                                 TmpDir = strsplit(logPath.folder, 'RawData\');EyeMotionDir = [AnalysisParameters.RawEyeMotionDataDirectory TmpDir{end} '\'];EyeMotionPath = dir(fullfile(EyeMotionDir, '*.dat'));
                         if ~isempty(EyeMotionPath)
                             AnalyseDataDets.RawEyeMotionPath{AnalyseCounter} = fullfile(EyeMotionPath.folder, EyeMotionPath.name);
-                            AnalyseDataDets.EyeMotionPath{AnalyseCounter} = fullfile(logPath.folder, 'EyeMotionData.mat');
                         else
                             AnalyseDataDets.RawEyeMotionPath{AnalyseCounter} = [];
-                            AnalyseDataDets.EyeMotionPath{AnalyseCounter} = [];
                         end
+                        AnalyseDataDets.EyeMotionPath{AnalyseCounter} = fullfile(logPath.folder, 'EyeMotionData.mat');
                         AnalyseDataDets.Mouse{AnalyseCounter} = jsonData.subject;
                         AnalyseDataDets.SessID(AnalyseCounter) = SessID;
                         AnalyseDataDets.MouseSessID(AnalyseCounter) = MouseSessID;

@@ -51,6 +51,19 @@ for s = 1:size(AnalyseDataDets.SessID,2)
                 extractedData = true;
             catch
                 attempts = attempts + 1;
+                fprintf('Attempt %d at reading in Eye and Motion data \n', attempts)
+                pause(0.5)
+            end
+        end
+        
+        if ~extractedData
+            try
+                [FileName, FilePath] = uigetfile(AnalyseDataDets.RawEyeMotionPath{s});
+                FullFileName = [FilePath FileName];
+                [rawEye, rawTrigger, rawMotion] = readpupil(FullFileName);
+                extractedData = true;
+            catch
+                keyboard
             end
         end
         
@@ -60,19 +73,20 @@ for s = 1:size(AnalyseDataDets.SessID,2)
         
         %% sometimes the dasbit gets registered twice, remove all dasbit 1s that are not separated from another dasbit 1 by a dasbit 0 (which is there when there is no stimulus in the ITI) or that are not separated more than the ITI
         
-        DAS1idx = find(rawTrigger(:,2) == 1);
-        ITI = Log_table.ITI(1)*1000;
-        wantedTriggers = false(length(DAS1idx),1);
-        for t = 1:length(DAS1idx)
-            if t==1 ||  rawTrigger(DAS1idx(t),1)-rawTrigger(DAS1idx(t-1),1)>ITI
-                wantedTriggers(t) = 1;
-            end
-        end
-        if sum(wantedTriggers) ~= nTrials
+        % The triggers '0' are the ones when a stimbit was received 
+        chan0 = rawTrigger(rawTrigger(:,2)==0,1);
+        TimeDiff = diff([0;chan0]);
+        wantedTriggers = TimeDiff>Log_table.ITI(1)*1000;
+        TrialStartTime = chan0(wantedTriggers);
+        
+        if length(TrialStartTime) > nTrials                       %too many triggers beginning, so remove those (always check though!, note: checked many sessions now and it was always the first trials)
+            figure;subplot(1,2,1);plot(diff(TrialStartTime));title(sprintf('Too many triggers %d out of %d', length(TrialStartTime), nTrials));ylabel('ITI')
+            TrialStartTime = TrialStartTime(length(TrialStartTime)-nTrials+1:end);
+            subplot(1,2,2);plot(diff(TrialStartTime));title(sprintf('After removing first triggers %d out of %d', length(TrialStartTime), nTrials));ylabel('ITI')
+            keyboard %check if this makes sense
+        elseif length(TrialStartTime) < nTrials                   % too few triggers
             keyboard
         end
-        wantedDAS1idx = DAS1idx(wantedTriggers);
-        TrialStartTime = rawTrigger(wantedDAS1idx,1);
         
         
         %% extract motion and eye data around the trial start time in the frequency of AnalysisParameters.Timeline
@@ -104,6 +118,8 @@ for s = 1:size(AnalyseDataDets.SessID,2)
         
         EyeMotionTableSess = table(TrialIDs, EyeX, EyeY, EyeH,  EyeW, Motion, EyeX_tc, EyeY_tc, EyeH_tc, EyeW_tc, Motion_tc);
         save(AnalyseDataDets.EyeMotionPath{s}, 'EyeMotionTableSess')
+        
+        clear rawTrigger rawEye rawMotion TrialIDs EyeX EyeY EyeH EyeW Motion EyeX_tc EyeY_tc EyeH_tc EyeW_tc Motion_tc
         
     end
     
