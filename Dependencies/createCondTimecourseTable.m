@@ -9,7 +9,7 @@ load(AnalysisParameters.CondLUTPath, 'CondLUT')
 %% go through the wanted Sessions and put all timecourses in a table, do this for the whole Cortex, and the right and left hemisphere
 
 Hemispheres = {'WholeCortex', 'RightHemisphere', 'LeftHemisphere'};
-Filenames = {fullfile(AnalysisParameters.CondWFDataPath,'CondTimecourseTable.mat'), fullfile(AnalysisParameters.CondWFDataPath,'CondTimecourseTable_R.mat'), fullfile(AnalysisParameters.CondWFDataPath,'CondTimecourseTable_L.mat')};
+Filenames = {fullfile(AnalysisParameters.DataTablePath,'CondTimecourseTable.mat'), fullfile(AnalysisParameters.DataTablePath,'CondTimecourseTable_R.mat'), fullfile(AnalysisParameters.DataTablePath,'CondTimecourseTable_L.mat')};
 AreaMasksNames = {'Model.AreaMask', 'Model.AreaMaskR', 'Model.AreaMaskL'};
 
 for h = 1:length(Hemispheres)

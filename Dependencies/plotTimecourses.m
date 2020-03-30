@@ -1,10 +1,10 @@
-function plotTimecourses(AnalyseDataDets,AnalysisParameters)
+function plotTimecourses(AnalysisParameters)
 
 %% load in the Trial & Condition % Session LUT
 
 load(AnalysisParameters.SessionLUTPath, 'SessionLUT')
 load(AnalysisParameters.CondLUTPath, 'CondLUT')
-load(fullfile(AnalysisParameters.CondWFDataPath,'CondTimecourseTable.mat'), 'CondTimecourseTable')
+load(fullfile(AnalysisParameters.DataTablePath,'CondTimecourseTable.mat'), 'CondTimecourseTable')
 
 Mice = unique(SessionLUT.MouseName);
 
@@ -92,7 +92,7 @@ for m = 1:length(Mice)
     AreaNames(strcmp(AreaNames, 'CondID')) = [];
     Hemispheres = {'WholeCortex', 'RightHemisphere', 'LeftHemisphere'};
     AreaMasks_all = {Model.AreaMask, Model.AreaMaskR, Model.AreaMaskL};
-    Filenames = {fullfile(AnalysisParameters.CondWFDataPath,'CondTimecourseTable.mat'), fullfile(AnalysisParameters.CondWFDataPath,'CondTimecourseTable_R.mat'), fullfile(AnalysisParameters.CondWFDataPath,'CondTimecourseTable_L.mat')};
+    Filenames = {fullfile(AnalysisParameters.DataTablePath,'CondTimecourseTable.mat'), fullfile(AnalysisParameters.DataTablePath,'CondTimecourseTable_R.mat'), fullfile(AnalysisParameters.DataTablePath,'CondTimecourseTable_L.mat')};
     
     for h = 1:length(Hemispheres)
         

@@ -13,10 +13,12 @@ AnalysisParameters.RedoAllenBrainAlignment = 0;
 AnalysisParameters.RedoRegistration = 0;
 AnalysisParameters.Trial_zscore = 0;                                        % tried it, made it worse
 AnalysisParameters.ExcludeTrialsWithMotion = 1;
+AnalysisParameters.MotionThreshold = 15;
 AnalysisParameters.PlotFigures = 'off';
 AnalysisParameters.BaselineTime = 200;                                      % in ms
 AnalysisParameters.StimTime = 500;                                          % in ms
 AnalysisParameters.ScriptsDir = pwd;
+AnalysisParameters.PlotAreas = {'VIS', 'VISp', 'VISal', 'VISam', 'VISl', 'VISli', 'VISpl', 'VISpm', 'VISpor', 'PTLp', 'CTXpl', 'SS', 'AUD', 'MO'};
 
 %% Add needed functions
 cd(AnalysisParameters.ScriptsDir)
@@ -50,5 +52,10 @@ createCondTimecourseTable(AnalyseDataDets, AnalysisParameters)
 %% Analyse the Data & make plots
 makeCondVideos(AnalyseDataDets, AnalysisParameters)
 
+%% Plot timecourses for each session
+plotTimecoursesSession(AnalyseDataDets, AnalysisParameters)
+
 %% Plot some timecourses
-plotTimecourses(AnalyseDataDets, AnalysisParameters)
+plotTimecourses(AnalysisParameters)
+
+

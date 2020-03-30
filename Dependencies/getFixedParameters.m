@@ -16,18 +16,17 @@ AnalysisParameters.TrialWFDataPath = [AnalysisParameters.TaskDataPath '\TrialWFD
 AnalysisParameters.CondWFDataPath = [AnalysisParameters.TaskDataPath '\CondWFData'];
 AnalysisParameters.RefImgPath = [AnalysisParameters.TaskDataPath '\RefImg'];
 AnalysisParameters.VideoPath = [AnalysisParameters.TaskDataPath '\Videos'];
+AnalysisParameters.DataTablePath = [AnalysisParameters.TaskDataPath '\DataTables'];
 AnalysisParameters.TimecoursePlotPath = [AnalysisParameters.TaskDataPath '\TimecoursePlots'];
 AnalysisParameters.SessionLUTPath = [AnalysisParameters.TaskDataPath '\SessionLUT.mat'];
 AnalysisParameters.TrialLUTPath = [AnalysisParameters.TaskDataPath '\TrialLUT.mat'];
 AnalysisParameters.CondLUTPath = [AnalysisParameters.TaskDataPath '\CondLUT.mat'];
-AnalysisParameters.EyeMotionTablePath = [AnalysisParameters.TaskDataPath '\EyeMotionTable.mat'];
 
 % other unimportant paramters, should just stay the same
 %AnalysisParameters.useImType = 'tiff';
 AnalysisParameters.ScaleFact = 0.5; 
 AnalysisParameters.Pix = 800*AnalysisParameters.ScaleFact;
 AnalysisParameters.SmoothFact = 0;    
-%AnalysisParameters.AREAS = {'V1','Vl','Val','Vrl','Va','Vam','Vpm','RSP','M1','M2'};
 AnalysisParameters.Exposure = 50;
 AnalysisParameters.Timeline = -AnalysisParameters.BaselineTime:AnalysisParameters.Exposure:AnalysisParameters.StimTime+AnalysisParameters.BaselineTime;
 

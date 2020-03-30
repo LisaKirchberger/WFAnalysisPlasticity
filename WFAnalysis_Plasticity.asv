@@ -13,6 +13,7 @@ AnalysisParameters.RedoAllenBrainAlignment = 0;
 AnalysisParameters.RedoRegistration = 0;
 AnalysisParameters.Trial_zscore = 0;                                        % tried it, made it worse
 AnalysisParameters.ExcludeTrialsWithMotion = 1;
+AnalysisParameters.MotionThreshold = 7;
 AnalysisParameters.PlotFigures = 'off';
 AnalysisParameters.BaselineTime = 200;                                      % in ms
 AnalysisParameters.StimTime = 500;                                          % in ms

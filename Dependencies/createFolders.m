@@ -24,6 +24,10 @@ if AnalysisParameters.OverwriteData == 1
     if exist(AnalysisParameters.TimecoursePlotPath, 'dir')
         rmdir(AnalysisParameters.TimecoursePlotPath, 's')
     end
+    % Folder for the Data tables
+    if exist(AnalysisParameters.DataTablePath, 'dir')
+        rmdir(AnalysisParameters.DataTablePath, 's')
+    end
 end
 
 if ~exist([AnalysisParameters.DataDirectory AnalysisParameters.Task], 'dir')
@@ -48,6 +52,10 @@ end
 
 if ~exist(AnalysisParameters.TimecoursePlotPath, 'dir')
     mkdir(AnalysisParameters.TimecoursePlotPath)
+end
+
+if ~exist(AnalysisParameters.DataTablePath, 'dir')
+    mkdir(AnalysisParameters.DataTablePath)
 end
 
 end

@@ -9,6 +9,7 @@ for s = AnalyseDataDets.SessID
     load(AnalysisParameters.TrialLUTPath)
     load(AnalysisParameters.SessionLUTPath)
     load(AnalysisParameters.CondLUTPath)
+    load(fullfile(AnalysisParameters.DataTablePath,'EyeMotionTable.mat'), 'EyeMotionTable')
     load(AnalyseDataDets.LogfilePath{s})
     
     %% Conditions
@@ -31,6 +32,7 @@ for s = AnalyseDataDets.SessID
             filename = fullfile(AnalysisParameters.TrialWFDataPath, sprintf('TrialID_%d.mat', wantedTrials(t)));
             load(filename, 'TrialData')
             CondData(:,:,:,t) = TrialData;
+            Motion(t) = EyeMotionTable.Motion(EyeMotionTable.TrialIDs == wantedTrials(t));
             clear TrialData
         end
         
@@ -56,7 +58,13 @@ for s = AnalyseDataDets.SessID
         else
             includedTrials = true(1,length(wantedTrials));
         end
-            
+        
+        % remove trials with too much movement
+        if AnalysisParameters.ExcludeTrialsWithMotion
+            includedTrials(Motion > AnalysisParameters.MotionThreshold) = 0;
+        end
+        
+        
         % take the average
         Cond_dFF_avg = squeeze(nanmean(dFF(:,:,:,includedTrials),4)); 
         

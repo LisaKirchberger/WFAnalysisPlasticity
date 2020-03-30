@@ -31,12 +31,12 @@ if AnalysisParameters.OverwriteData == 1 || ~exist(AnalysisParameters.SessionLUT
     save(AnalysisParameters.CondLUTPath, 'CondLUT')
     % create an empty condition timecourse table
     CondTimecourseTable = table();
-    save(fullfile(AnalysisParameters.CondWFDataPath,'CondTimecourseTable.mat'), 'CondTimecourseTable')
-    save(fullfile(AnalysisParameters.CondWFDataPath,'CondTimecourseTable_R.mat'), 'CondTimecourseTable')
-    save(fullfile(AnalysisParameters.CondWFDataPath,'CondTimecourseTable_L.mat'), 'CondTimecourseTable')
+    save(fullfile(AnalysisParameters.DataTablePath,'CondTimecourseTable.mat'), 'CondTimecourseTable')
+    save(fullfile(AnalysisParameters.DataTablePath,'CondTimecourseTable_R.mat'), 'CondTimecourseTable')
+    save(fullfile(AnalysisParameters.DataTablePath,'CondTimecourseTable_L.mat'), 'CondTimecourseTable')
     % create an empty Eye and Motion Table
     EyeMotionTable = table();
-    save(AnalysisParameters.EyeMotionTablePath, 'EyeMotionTable');
+    save(fullfile(AnalysisParameters.DataTablePath,'EyeMotionTable.mat'), 'EyeMotionTable');
 end
 
 

@@ -1,5 +1,10 @@
 function createEyeMotionTable(AnalyseDataDets,AnalysisParameters)
 
+if ~exist(fullfile(AnalysisParameters.DataTablePath,'EyeMotionTable.mat'), 'file')
+    EyeMotionTable = table();
+    save(fullfile(AnalysisParameters.DataTablePath,'EyeMotionTable.mat'), 'EyeMotionTable');
+end
+
 for s = 1:size(AnalyseDataDets.SessID,2)
     
     fprintf('Creating eyetracking and motion data for SessionID %s \n', num2str(AnalyseDataDets.SessID(s)))
@@ -7,7 +12,7 @@ for s = 1:size(AnalyseDataDets.SessID,2)
     
     %% load in the logfile & the current version of the EyeMotionTable
     
-    load(AnalysisParameters.EyeMotionTablePath, 'EyeMotionTable')
+    load(fullfile(AnalysisParameters.DataTablePath,'EyeMotionTable.mat'), 'EyeMotionTable')
     load(AnalyseDataDets.LogfilePath{s}, 'Log_table')
     nTrials = max(Log_table.Trial);
     
@@ -32,7 +37,7 @@ for s = 1:size(AnalyseDataDets.SessID,2)
         EyeMotionTableSess = table(TrialIDs, EyeX, EyeY, EyeH,  EyeW, Motion, EyeX_tc, EyeY_tc, EyeH_tc, EyeW_tc, Motion_tc);
         save(AnalyseDataDets.EyeMotionPath{s}, 'EyeMotionTableSess')
         EyeMotionTable = [EyeMotionTable; EyeMotionTableSess];
-        save(AnalysisParameters.EyeMotionTablePath, 'EyeMotionTable')
+        save(fullfile(AnalysisParameters.DataTablePath,'EyeMotionTable.mat'), 'EyeMotionTable')
         continue
     end
     
@@ -125,7 +130,7 @@ for s = 1:size(AnalyseDataDets.SessID,2)
     
     load(AnalyseDataDets.EyeMotionPath{s}, 'EyeMotionTableSess')
     EyeMotionTable = [EyeMotionTable; EyeMotionTableSess];
-    save(AnalysisParameters.EyeMotionTablePath, 'EyeMotionTable')
+    save(fullfile(AnalysisParameters.DataTablePath,'EyeMotionTable.mat'), 'EyeMotionTable')
         
 end %Sessions
 
