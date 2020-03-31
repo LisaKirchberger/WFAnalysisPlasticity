@@ -23,13 +23,17 @@ AnalysisParameters.TrialLUTPath = [AnalysisParameters.TaskDataPath '\TrialLUT.ma
 AnalysisParameters.CondLUTPath = [AnalysisParameters.TaskDataPath '\CondLUT.mat'];
 
 % other unimportant paramters, should just stay the same
-%AnalysisParameters.useImType = 'tiff';
 AnalysisParameters.ScaleFact = 0.5; 
 AnalysisParameters.Pix = 800*AnalysisParameters.ScaleFact;
 AnalysisParameters.SmoothFact = 0;    
 AnalysisParameters.Exposure = 50;
 AnalysisParameters.Timeline = -AnalysisParameters.BaselineTime:AnalysisParameters.Exposure:AnalysisParameters.StimTime+AnalysisParameters.BaselineTime;
 
+if strcmp(AnalysisParameters.Task, 'EasyOptoDetection_PassiveMultiLaser')
+    AnalysisParameters.ExcludedSessions = {'Irri_20200121_B1', 'Jon_20200122_B1', 'Lysa_20200124_B1'};
+else
+    AnalysisParameters.ExcludedSessions = {};
+end
 
 end
 

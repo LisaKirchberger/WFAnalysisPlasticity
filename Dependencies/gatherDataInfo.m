@@ -69,8 +69,8 @@ for m = 1:length(AnalysisParameters.Mice)
                 jsonData = readJSONfile(jsonPath.name);
                 if strcmpi(jsonData.stimulus, AnalysisParameters.Task)
                     
-                    % Check if this Session is already present in the Session LUT, if so just jump to next one
-                    if ~strcmpi(SessionLUT.LogfileName, jsonData.logfile(1:end-4))
+                    % Check if this Session is not already present in the Session LUT, and if it is not an excluded session, add it to AnalyseDataDets, otherwise just jump to next one
+                    if ~any(strcmp(SessionLUT.LogfileName, jsonData.logfile(1:end-4))) && ~any(strcmp(AnalysisParameters.ExcludedSessions, jsonData.logfile(1:end-4)))
                         
                         % Read in the Logfile and save
                         logPath = dir([Sessions(s).name(1:end-1) '*.mat']);
