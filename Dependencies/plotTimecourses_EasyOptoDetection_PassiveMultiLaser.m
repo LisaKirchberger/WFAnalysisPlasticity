@@ -1,4 +1,4 @@
-function plotTimecourses(AnalysisParameters)
+function plotTimecourses_EasyOptoDetection_PassiveMultiLaser(AnalysisParameters)
 
 %% load in the Trial & Condition % Session LUT
 
@@ -8,20 +8,57 @@ load(fullfile(AnalysisParameters.DataTablePath,'CondTimecourseTable.mat'), 'Cond
 
 Mice = unique(SessionLUT.MouseName);
 
+%% select SessionIDs
+
+for m = 1:length(Mice)
+    Mouse = Mice{m};
+    switch Mouse
+        case 'Fergon'
+            wantedSessions = {'Fergon_20191022_B1', 'Fergon_20191119_B2', 'Fergon_20191203_B2', 'Fergon_20191217_B3'};
+            LearningMouse(m) = true;
+            for s = 1:length(wantedSessions)
+                SessIDs{m}(s) = SessionLUT.SessID( strcmp(SessionLUT.LogfileName, wantedSessions{s} )  ); %#ok<*AGROW>
+            end
+        case 'Hodor'
+            wantedSessions = {'Hodor_20191022_B1', 'Hodor_20191127_B3', 'Hodor_20191211_B2', 'Hodor_20191218_B2'};
+            LearningMouse(m) = true;
+            for s = 1:length(wantedSessions)
+                 SessIDs{m}(s) = SessionLUT.SessID( strcmp(SessionLUT.LogfileName, wantedSessions{s} )  ); %#ok<*AGROW>
+            end
+        case 'Irri'
+            wantedSessions = {'Irri_20200127_B1', 'Irri_20200128_B2', 'Irri_20200211_B2', 'Irri_20200225_B2'};
+            LearningMouse(m) = false;
+            for s = 1:length(wantedSessions)
+                 SessIDs{m}(s) = SessionLUT.SessID( strcmp(SessionLUT.LogfileName, wantedSessions{s} )  ); %#ok<*AGROW>
+            end
+        case 'Jon'
+            wantedSessions = {'Jon_20200127_B1', 'Jon_20200129_B2', 'Jon_20200212_B2', 'Jon_20200219_B2'};
+            LearningMouse(m) = false;
+            for s = 1:length(wantedSessions)
+                 SessIDs{m}(s) = SessionLUT.SessID( strcmp(SessionLUT.LogfileName, wantedSessions{s} )  ); %#ok<*AGROW>
+            end
+        case 'Lysa'
+            % not enough data yet
+            continue
+            wantedSessions = {'Lysa_20200124_B4'};
+            LearningMouse(m) = true;
+            for s = 1:length(wantedSessions)
+                 SessIDs{m}(s) = SessionLUT.SessID( strcmp(SessionLUT.LogfileName, wantedSessions{s} )  ); %#ok<*AGROW>
+            end
+    end
+end
+
+
+%% make plots for each mouse 
+
 for m = 1:length(Mice)
     
     %% Parameters
     
-    SessIDs = SessionLUT.SessID(strcmp(SessionLUT.MouseName, Mice{m}));
-    Mouse = char(SessionLUT.MouseName(SessIDs(1)));
-    if length(SessIDs) > 4
-        % pick 4 Sessions to compare
-        disp('too many Sessions to plot all at once, pick 4 or change code')
-        keyboard
-    end
+    Mouse = Mice{m};
     
-    for s = SessIDs'
-        CondIDs{s} = CondLUT.CondID(CondLUT.SessID == s);
+    for s = 1:length(SessIDs{m})
+        CondIDs{s} = CondLUT.CondID(CondLUT.SessID ==  SessIDs{m}(s));
     end
     
     
@@ -42,7 +79,7 @@ for m = 1:length(Mice)
     plot(Model.AllX, Model.AllY, 'k.', 'MarkerSize', 0.1)
     title(Area)
     Positions = [2 3 5 6];
-    for s = 1:length(SessIDs)
+    for s = 1:length(SessIDs{m})
         AxesHandle(s) = subplot(2,3,Positions(s)); %#ok<AGROW>
         plot(AnalysisParameters.Timeline./1000, zeros(length(AnalysisParameters.Timeline),1), 'k--');hold on
         Colors = jet(length(CondIDs{s}));
@@ -108,7 +145,7 @@ for m = 1:length(Mice)
             plot(Model.AllX, Model.AllY, 'k.', 'MarkerSize', 0.1)
             title(Area)
             Positions = [2 3 5 6];
-            for s = 1:length(SessIDs)
+            for s = 1:length(SessIDs{m})
                 AxesHandle(s) = subplot(2,3,Positions(s));
                 plot(AnalysisParameters.Timeline./1000, zeros(length(AnalysisParameters.Timeline),1), 'k--');hold on
                 Colors = jet(length(CondIDs{s}));
@@ -142,5 +179,12 @@ for m = 1:length(Mice)
 end
 
 
+%% now plot average for learning and control mice
+
+ExpGroups = {'Learning', 'Control'};
+
+for group = 1:2
+    keyboard
+end
 
 end

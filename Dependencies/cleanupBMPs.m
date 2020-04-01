@@ -1,6 +1,6 @@
 %% Set Datapath to Folder of Mouse you would like to clean up
 
-MouseName = 'Bran';
+MouseName = 'Jon';
 
 datapath = ['\\vc2nin\Mouse_Plasticity\RawData\', MouseName]; 
 subdirs = dir(fullfile(datapath));

@@ -5,10 +5,10 @@ clc
 
 %% Set the parameters
 AnalysisParameters.Project = 'Mouse_Plasticity';
-AnalysisParameters.Mice = {'Fergon'};                                       % {'Arja','Bran','Fergon', 'Hodor'};                                                           
+AnalysisParameters.Mice = {'Fergon', 'Hodor', 'Irri', 'Jon', 'Lysa'};                                                           
 AnalysisParameters.Task ='EasyOptoDetection_PassiveMultiLaser';
 
-AnalysisParameters.OverwriteData = 1;
+AnalysisParameters.OverwriteData = 0;
 AnalysisParameters.RedoAllenBrainAlignment = 0;
 AnalysisParameters.RedoRegistration = 0;
 AnalysisParameters.Trial_zscore = 0;                                        % tried it, made it worse
@@ -56,6 +56,8 @@ makeCondVideos(AnalyseDataDets, AnalysisParameters)
 plotTimecoursesSession(AnalyseDataDets, AnalysisParameters)
 
 %% Plot some timecourses
-plotTimecourses(AnalysisParameters)
+if strcmp(AnalysisParameters.Task ,'EasyOptoDetection_PassiveMultiLaser')
+    plotTimecourses_EasyOptoDetection_PassiveMultiLaser(AnalysisParameters)
+end
 
 

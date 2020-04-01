@@ -20,7 +20,29 @@ for s = 1:size(AnalyseDataDets.SessID,2)
     Log_table.SessID = repmat(AnalyseDataDets.SessID(s),size(Log_table,1),1);
     Log_table.MouseSessID = repmat(AnalyseDataDets.MouseSessID(s),size(Log_table,1),1);
     
-
+    % Need to do make some fields into cells, otherwise can't concatenate the tables
+    if any(strcmp('Mouse', Log_table.Properties.VariableNames))
+        if isa(Log_table.Mouse,'char')
+            Log_table.Mouse = cellstr(Log_table.Mouse);
+        end
+    end
+    if any(strcmp('Logfile_name', Log_table.Properties.VariableNames))
+        if isa(Log_table.Logfile_name,'char')
+            Log_table.Logfile_name = cellstr(Log_table.Logfile_name);
+        end
+    end
+    if any(strcmp('Setup', Log_table.Properties.VariableNames))
+        if isa(Log_table.Setup, 'char')
+            Log_table.Setup = cellstr(Log_table.Setup);
+        end
+    end
+    if any(strcmp('Exposure', Log_table.Properties.VariableNames))
+        if sum(strcmp('Exposure',Log_table.Properties.VariableNames))
+            Log_table.Exposure = table2array(varfun(@str2num, Log_table, 'InputVariables', 'Exposure'));
+        end
+    end 
+    
+    
     %% Reference Image using the pRF map
     
     if exist(fullfile(AnalysisParameters.pRFMappingDir,Mouse,'RefImg.mat'), 'file')
@@ -179,7 +201,11 @@ for s = 1:size(AnalyseDataDets.SessID,2)
         save(fileName, 'TrialData')
         clear TrialData
         
-        TrialLUT = cat(1,TrialLUT,Log_table(t,:));
+        try
+            TrialLUT = cat(1,TrialLUT,Log_table(t,:));
+        catch
+            keyboard
+        end
         save(AnalysisParameters.TrialLUTPath, 'TrialLUT')
         
         TrialID = TrialID + 1;
