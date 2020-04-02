@@ -18,7 +18,7 @@ AnalysisParameters.PlotFigures = 'off';
 AnalysisParameters.BaselineTime = 200;                                      % in ms
 AnalysisParameters.StimTime = 500;                                          % in ms
 AnalysisParameters.ScriptsDir = pwd;
-AnalysisParameters.PlotAreas = {'VIS', 'VISp', 'VISal', 'VISam', 'VISl', 'VISli', 'VISpl', 'VISpm', 'VISpor', 'PTLp', 'CTXpl', 'SS', 'AUD', 'MO'};
+AnalysisParameters.PlotAreas = {'VIS', 'VISp', 'VISal', 'VISam', 'VISl', 'VISli', 'VISpl', 'VISpm', 'VISpor', 'PTLp', 'CTXpl', 'SS', 'AUD', 'MO'};%add 'RSP' when ran again
 
 %% Add needed functions
 cd(AnalysisParameters.ScriptsDir)

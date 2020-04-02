@@ -61,7 +61,7 @@ AllY = AllY(ind);
 
 %% add additional Areas
 
-additionalAreas = {'VIS', 'SS', 'AUD', 'MO'};
+additionalAreas = {'VIS', 'SS', 'AUD', 'MO', 'RSP'};
 for addA = 1:length(additionalAreas)
     wantedAreas = find(~cellfun(@isempty, regexp(AreaName, additionalAreas{addA}, 'match') ));
     Boundaries = [];

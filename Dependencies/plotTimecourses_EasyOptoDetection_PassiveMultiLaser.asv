@@ -51,7 +51,7 @@ end
 
 %% make plots for each mouse 
 
-for m = 1:length(SessIDs)
+for m = 1:length(Mice)
     
     %% Parameters
     
@@ -103,13 +103,12 @@ for m = 1:length(SessIDs)
     
     %% one with legend to get the legend for presentations etc
     
-    %legendtext = {' ', '0.0 mW', '0.1 mW', '0.5 mW', '1.0 mW', '5.0 mW', '10.0 mW'};
-    legendtext = {' ', '10.0 mW', '5.0 mW', '1.0 mW', '0.5 mW', '0.1 mW', '0.0 mW'};
+    legendtext = {' ', '0.0 mW', '0.1 mW', '0.5 mW', '1.0 mW', '5.0 mW', '10.0 mW'};
     figure('visible', AnalysisParameters.PlotFigures)
     s=1;
     plot(AnalysisParameters.Timeline./1000, zeros(length(AnalysisParameters.Timeline),1), 'k--');hold on
     Colors = jet(length(CondIDs{s}));
-    for c = length(CondIDs{s}):-1:1
+    for c = 1:length(CondIDs{s})
         myRow = find(CondTimecourseTable.CondID == CondIDs{s}(c)); %#ok<NASGU>
         eval(['timecourse = CondTimecourseTable.' Area '(myRow,:);'])
         plot(AnalysisParameters.Timeline./1000, timecourse, 'Color', Colors(c,:), 'LineWidth', 1)
