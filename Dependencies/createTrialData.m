@@ -64,6 +64,7 @@ for s = 1:size(AnalyseDataDets.SessID,2)
     nTrials = max(Log_table.Trial);
     if nTrials ~= size(TrialDirs,1)
         disp('number of Trials in Logfile and recording do not match')
+        fprintf('%s \n', AnalyseDataDets.DataPath{s})
         nTrials = size(TrialDirs,1); %%% !!! temp !!!!!
         %keyboard
     end
@@ -112,7 +113,7 @@ for s = 1:size(AnalyseDataDets.SessID,2)
     
     for t = 1:nTrials
         
-        if t/25 == round(t/25)
+        if t/100 == round(t/100)
             fprintf('Trial %s out of %s \n', num2str(t), num2str(nTrials))
         end
         
