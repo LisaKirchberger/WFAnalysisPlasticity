@@ -29,7 +29,11 @@ regImage =  imwarp(Image,TM,'OutputView',imref2d(size(refImage)));
 imc = (single(regImage) - min(single(regImage(:))))./(max(single(regImage(:)))-min(single(regImage(:))));
 imagesc(imfuse(histeq(ima),histeq(imc)));
 
-improveOverlay = questdlg('Do you want to improve the overlay?','Shift more','yes','no','no');
+% ask if want to improve overlay --> looked at many and actually overlay
+% was always really goood, so got rid of it
+%improveOverlay = questdlg('Do you want to improve the overlay?','Shift more','yes','no','no');
+improveOverlay = 'no';
+
 
 if strcmp(improveOverlay,'yes')
     

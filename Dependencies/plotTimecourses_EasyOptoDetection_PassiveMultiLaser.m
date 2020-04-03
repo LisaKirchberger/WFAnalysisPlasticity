@@ -126,8 +126,8 @@ for m = 1:length(SessIDs)
         
     %% plot it for all areas and store as images
     
-    %AreaNames = CondTimecourseTable.Properties.VariableNames;
-    %AreaNames(strcmp(AreaNames, 'CondID')) = [];
+                %AreaNames = CondTimecourseTable.Properties.VariableNames;
+                %AreaNames(strcmp(AreaNames, 'CondID')) = [];
     AreaNames = AnalysisParameters.PlotAreas;
     Hemispheres = {'WholeCortex', 'RightHemisphere', 'LeftHemisphere'};
     AreaMasks_all = {Model.AreaMask, Model.AreaMaskR, Model.AreaMaskL};

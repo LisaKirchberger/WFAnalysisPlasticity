@@ -6,17 +6,17 @@ clc
 %% Set the parameters
 AnalysisParameters.Project = 'Mouse_Plasticity';
 AnalysisParameters.Mice = {'Fergon', 'Hodor', 'Irri', 'Jon', 'Lysa'};                                                           
-Tasks = {'EasyOptoDetection_PassiveMultiLaser', 'EasyOptoDetection', 'EasyOptoDetectionReplay', 'EasyOptoDetection_Passive'};
-Taskchoice = menu('Choose the Task',Tasks);
-AnalysisParameters.Task = Tasks{Taskchoice}; clear Tasks Taskchoice;
+Tasks = 
+AnalysisParameters.Task ='EasyOptoDetection_PassiveMultiLaser'; %'EasyOptoDetection', 'EasyOptoDetection_Passive'
 
-AnalysisParameters.OverwriteData = 1;
+AnalysisParameters.OverwriteData = 0;
 AnalysisParameters.RedoAllenBrainAlignment = 0;
 AnalysisParameters.RedoRegistration = 0;
+AnalysisParameters.Trial_zscore = 0;                                        % tried it, made it worse
 AnalysisParameters.ExcludeTrialsWithMotion = 1;
 AnalysisParameters.MotionThreshold = 15;
 AnalysisParameters.PlotFigures = 'off';
-AnalysisParameters.BaselineTime = 500;                                      % in ms
+AnalysisParameters.BaselineTime = 200;                                      % in ms
 AnalysisParameters.StimTime = 500;                                          % in ms
 AnalysisParameters.ScriptsDir = pwd;
 AnalysisParameters.PlotAreas = {'VIS', 'VISp', 'VISal', 'VISam', 'VISl', 'VISli', 'VISpl', 'VISpm', 'VISpor', 'PTLp', 'CTXpl', 'SS', 'AUD', 'MO', 'RSP'};

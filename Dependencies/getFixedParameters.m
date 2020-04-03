@@ -29,6 +29,8 @@ AnalysisParameters.Pix = 800*AnalysisParameters.ScaleFact;
 AnalysisParameters.SmoothFact = 0;    
 AnalysisParameters.Exposure = 50;
 AnalysisParameters.Timeline = -AnalysisParameters.BaselineTime:AnalysisParameters.Exposure:AnalysisParameters.StimTime+AnalysisParameters.BaselineTime;
+AnalysisParameters.Trial_zscore = 0;                                        % tried it, made it worse, don't use it!
+
 
 if strcmp(AnalysisParameters.Task, 'EasyOptoDetection_PassiveMultiLaser')
     AnalysisParameters.ExcludedSessions = {'Irri_20200121_B1', 'Jon_20200122_B1', 'Lysa_20200124_B1'};

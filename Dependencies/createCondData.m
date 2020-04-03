@@ -10,12 +10,11 @@ for s = AnalyseDataDets.SessID
     load(AnalysisParameters.SessionLUTPath)
     load(AnalysisParameters.CondLUTPath)
     load(fullfile(AnalysisParameters.DataTablePath,'EyeMotionTable.mat'), 'EyeMotionTable')
-    load(AnalyseDataDets.LogfilePath{s})
     
     %% Conditions
     
     CondID = size(CondLUT,1)+1;
-    usedConds = unique(Log_table.TrialCond);
+    usedConds = unique(TrialLUT.TrialCond(TrialLUT.SessID == s));
     gotRefImage = 0;
     
     for c = usedConds'
@@ -96,6 +95,11 @@ for s = AnalyseDataDets.SessID
         
         CondWord = TrialLUT.Trialword(wantedTrials(1));
         Cond = c;
+        if Cond >= 100 && Cond < 200
+            CondWord = cellstr([char(CondWord) ' correct']);% these were correct trials
+        elseif Cond >= 200
+            CondWord = cellstr([char(CondWord) ' erroneous']);% these were erroneous trials
+        end
         TrialIDs = mat2cell(wantedTrials(includedTrials), length(wantedTrials(includedTrials)));
         exclTrialIDs = mat2cell(wantedTrials(~includedTrials), length(wantedTrials(~includedTrials)));
         SessID = s;
