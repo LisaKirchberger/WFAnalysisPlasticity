@@ -1,38 +1,50 @@
-function alignAllenBrainMap_fJoe(AnalyseDataDets,AnalysisParameters)
+
 
 %% This script aligns a reference brain image to the Allen Brain Map
+
+%% These variables need to be changed!!! 
+
+AllenBrainFolder = 'C:\Users\Joe-S\Documents\Documents\Data\Mesoscope\Analysis parameters';
+ReferenceImageFolder = 'C:\Users\Joe-S\Documents\Documents\Data\Mesoscope\Analysis parameters\ReferenceImages'; %you need a reference image for each mouse saved here that you use for the alignment, also look at line 31
+AllenBrainFilePath = fullfile(AllenBrainFolder, 'Model.mat'); % this is where it will save the Model 
+AllenImagesPath = 'xxxxxx\AllenBrainImages';%put whereever you saved the screenshots from the allen brain atlas here
+PixelNumX = 900;
+PixelNumY = 1200; 
+Mice = {'MouseA', 'MouseB', 'MouseC'};
 
 
 %% Read in standard images and create Allen Brain Model (if doesn't exist yet)
 
-if ~exist(fullfile(AnalysisParameters.AllenBrainModelDir,'AllenBrainModel.mat'), 'file')
-    createAllenBrainModel(AnalysisParameters)
+if ~exist(AllenBrainFilePath, 'file')
+    createAllenBrainModel_Joe(AllenBrainFilePath, AllenImagesPath, PixelNumX, PixelNumY)
 end
 
 
 %% Overlay the Allen Brain Model onto each Mouse
 
-for M = 1:size(AnalysisParameters.Mice,2)
+for M = 1:length(Mice)
     
-    RedoAlignment_Mouse = AnalysisParameters.RedoAllenBrainAlignment;
-    Mouse = AnalysisParameters.Mice{M};
-    if ~any(strcmp(AnalyseDataDets.Mouse, Mouse))
-        continue
-    end
-    BrainModelFileMouse = fullfile(AnalysisParameters.AllenBrainModelDir, [Mouse '_brainareamodel.mat']);
+    
+    Mouse = Mice{M};
+    
+    % load the reference image for this mouse 
+    pRFfile = [ReferenceImageFolder '\' Mouse 'refImage'];
+    
+    % filename where will save the model for this mouse
+    BrainModelFileMouse = fullfile(AllenBrainFolder, [Mouse '_brainareamodel.mat']);
 
     
     
     %% If the AllenBrainModel does not yet exist or we want to redo the alignment, align the Allen Brain Map to the reference image (manual step!)
     
-    if ~exist(BrainModelFileMouse, 'file') || RedoAlignment_Mouse
+    if ~exist(BrainModelFileMouse, 'file')
         
         %% Load the general AllenBrainModel and the pRF reference image
         
-        load(fullfile(AnalysisParameters.AllenBrainModelDir,'AllenBrainModel.mat')) %#ok<*LOAD>
+        load(AllenBrainFilePath) %#ok<*LOAD>
         
-        % here you should load in whichever image you want to use for alignment:
-        pRFfile = fullfile(AnalysisParameters.pRFMappingDir,Mouse,'pRFmaps');
+        % here you should load in whichever image you want to use for
+        % alignment: you should load an image called brain!
         load(pRFfile)
       
         
@@ -40,21 +52,14 @@ for M = 1:size(AnalysisParameters.Mice,2)
         %% plot the pRF results (or the images you want to align to --> this could also be 1 image instead of 4 like we plot, then only plot h1)
         
         figure('Name', Mouse, 'Units','normalized','Position',[0 0 0.9 0.9])
-        suptitle(Mouse)
-        h1 = subplot(3,4,1);imagesc(brain); colormap('gray'); freezeColors; colormap('jet'); hold on; tmp = imgaussfilt(AZIit,2,'FilterDomain','spatial'); h = imagesc(tmp,[quantile(tmp(~isnan(tmp)),0.01) quantile(tmp(~isnan(tmp)),0.99)]); set(h,'AlphaData',~isnan(imgaussfilt(AZIit,2,'FilterDomain','spatial')));axis square
-        h2 = subplot(3,4,5);imagesc(brain); colormap('gray'); freezeColors; colormap('jet'); hold on; tmp = imgaussfilt(ELEit,2,'FilterDomain','spatial'); h = imagesc(tmp,[quantile(tmp(~isnan(tmp)),0.01) quantile(tmp(~isnan(tmp)),0.99)]); set(h,'AlphaData',~isnan(imgaussfilt(AZIit,2,'FilterDomain','spatial')));axis square
-        h3 = subplot(3,4,9);imagesc(brain); colormap('gray'); freezeColors; colormap('jet'); hold on; tmp = imgaussfilt(PRFit,2,'FilterDomain','spatial'); h = imagesc(tmp,[quantile(tmp(~isnan(tmp)),0.01) quantile(tmp(~isnan(tmp)),0.99)]); set(h,'AlphaData',~isnan(imgaussfilt(AZIit,2,'FilterDomain','spatial')));axis square
-        h4 = subplot(3,4,[2 3 4 6 7 8 10 11 12]);imagesc(brain); colormap('gray'); freezeColors; colormap('jet'); hold on; tmp = imgaussfilt(out.SIGNMAPp,2,'FilterDomain','spatial'); h = imagesc(tmp,[quantile(tmp(~isnan(tmp)),0.01) quantile(tmp(~isnan(tmp)),0.99)]); set(h,'AlphaData',~isnan(imgaussfilt(AZIit,2,'FilterDomain','spatial')));axis square
+        imagesc(brain);colormap gray
         
         
         %% plot the Allen Brain Map (not yet aligned) and manually adjust
         
-        suptitle('a = left, d = right, s = down, w = up, f/g = xscale down/up, v/b = yscale down/up, k for okay')
+        title('a = left, d = right, s = down, w = up, f/g = xscale down/up, v/b = yscale down/up, k for okay')
         
-        subplot(h1),h5 = plot(Model.AllX,Model.AllY,'k.');
-        subplot(h2),h6 = plot(Model.AllX,Model.AllY,'k.');
-        subplot(h3),h7 = plot(Model.AllX,Model.AllY,'k.');
-        subplot(h4),h8 = plot(Model.AllX,Model.AllY,'k.');
+        h = plot(Model.AllX,Model.AllY,'k.');
         
         okay = 0;
         key = '0';
@@ -67,11 +72,8 @@ for M = 1:size(AnalysisParameters.Mice,2)
         Model.scaleY = 1;
         
         while ~okay
-            delete(h5),delete(h6),delete(h7),delete(h8)
-            subplot(h1),h5 = plot(Model.AllX,Model.AllY,'k.');
-            subplot(h2),h6 = plot(Model.AllX,Model.AllY,'k.');
-            subplot(h3),h7 = plot(Model.AllX,Model.AllY,'k.');
-            subplot(h4),h8 = plot(Model.AllX,Model.AllY,'k.');
+            delete(h)
+            h = plot(Model.AllX,Model.AllY,'k.');
             if strcmp(key,'d')
                 Model.shiftX = Model.shiftX-1;
                 key = '0';
@@ -129,9 +131,9 @@ for M = 1:size(AnalysisParameters.Mice,2)
         %% Apply the shift to the model areas (based on shifted boundaries)
         
         for i = 1:length(Model.AreaMask)
-            Mask = false(AnalysisParameters.Pix,AnalysisParameters.Pix);
+            Mask = false(PixelNumX,PixelNumY);
             for j = 1:length(Model.Boundary{i})
-                Mask(poly2mask(Model.Boundary{i}{j}(:,1),Model.Boundary{i}{j}(:,2),AnalysisParameters.Pix,AnalysisParameters.Pix)) = true;
+                Mask(poly2mask(Model.Boundary{i}{j}(:,1),Model.Boundary{i}{j}(:,2),PixelNumX,PixelNumY)) = true;
             end
             Model.AreaMask{i} = Mask;
         end
@@ -140,19 +142,19 @@ for M = 1:size(AnalysisParameters.Mice,2)
         %% Make Boundaries & masks for left and right hemisphere
         
         for i = 1:length(Model.Boundary)
-            MaskR = false(AnalysisParameters.Pix,AnalysisParameters.Pix);
-            MaskL = false(AnalysisParameters.Pix,AnalysisParameters.Pix);
+            MaskR = false(PixelNumX,PixelNumY);
+            MaskL = false(PixelNumX,PixelNumY);
             for j = 1:length(Model.Boundary{i})
                 % right hemisphere; all pixels of boundary with y values smaller than the estimation of Bregma (midline)
                 wantedBoundaryPixels = Model.Boundary{i}{j}(:,2) <= Model.Bregma(2);
                 Model.BoundaryR{i}{j}(:,1) = Model.Boundary{i}{j}(wantedBoundaryPixels,1);
                 Model.BoundaryR{i}{j}(:,2) = Model.Boundary{i}{j}(wantedBoundaryPixels,2);
-                MaskR(poly2mask(Model.BoundaryR{i}{j}(:,1),Model.BoundaryR{i}{j}(:,2),AnalysisParameters.Pix,AnalysisParameters.Pix)) = true;
+                MaskR(poly2mask(Model.BoundaryR{i}{j}(:,1),Model.BoundaryR{i}{j}(:,2),PixelNumX,PixelNumY)) = true;
                  % left hemisphere; all pixels of boundary with y values larger than the estimation of Bregma (midline)
                 wantedBoundaryPixels = Model.Boundary{i}{j}(:,2) >= Model.Bregma(2);
                 Model.BoundaryL{i}{j}(:,1) = Model.Boundary{i}{j}(wantedBoundaryPixels,1);
                 Model.BoundaryL{i}{j}(:,2) = Model.Boundary{i}{j}(wantedBoundaryPixels,2);
-                MaskL(poly2mask(Model.BoundaryL{i}{j}(:,1),Model.BoundaryL{i}{j}(:,2),AnalysisParameters.Pix,AnalysisParameters.Pix)) = true;
+                MaskL(poly2mask(Model.BoundaryL{i}{j}(:,1),Model.BoundaryL{i}{j}(:,2),PixelNumX,PixelNumY)) = true;
             end
             Model.AreaMaskR{i} = MaskR;
             Model.AreaMaskL{i} = MaskL;
@@ -163,7 +165,7 @@ for M = 1:size(AnalysisParameters.Mice,2)
         
         save(BrainModelFileMouse,'Model')
         % and save the figure
-        BrainModelFigFile =  fullfile(AnalysisParameters.AllenBrainModelDir, [Mouse '_BrainAreaModel']);
+        BrainModelFigFile =  fullfile(AllenBrainFolder, [Mouse '_AlignmentPlot']);
         saveas(gcf,BrainModelFigFile,'fig')
         
         close all
@@ -172,5 +174,3 @@ for M = 1:size(AnalysisParameters.Mice,2)
     
 end
 
-
-end
