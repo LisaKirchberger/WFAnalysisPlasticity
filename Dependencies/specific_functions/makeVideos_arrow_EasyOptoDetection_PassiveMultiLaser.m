@@ -60,12 +60,11 @@ for m = 1:length(Mice)
 end
 
 
-%% pick arrow Position
+%% create an image that is very crisp so can see the injection site
 
-for m = 1:length(Mice)
+for m = 1:length(SessIDs)
     Mouse = Mice{m};
     if any(isnan(ArrowPos.V1(m,:)))
-        % get a crisp image by averaging across many raw images during the baseline period
         tmpImages = nan(AnalysisParameters.Pix,AnalysisParameters.Pix,100);
         imageCounter = 1;
         SessFolders = dir(SessionLUT.DataPath{SessionLUT.SessID == SessIDs{m}(1)});
@@ -90,127 +89,74 @@ for m = 1:length(Mice)
     end
 end
 
+%% make a video with an arrow pointing at the injection site 1 video per mouse
 
+pickedCond = 5;
 
-
-%% Make overview video for the 4 stages contrasting learning and control mice
-
-PlotMice = {'Irri', 'Jon'};
-MouseNumbers = [3 4];
-PlotConds = [2,4,6];
-PlotCondNames = {'0.1mW', '1mW', '10mW', '0.1mW', '1mW', '10mW'};
-SessConds = {'preTraining', '1stExposure', 'intermediate', 'expert'};
-
-% Load the AllenBrainModel for both mice
-Mouse = PlotMice{1};
-Allenmodelpath = [AnalysisParameters.AllenBrainModelDir '\' Mouse '_brainareamodel.mat'];
-load(Allenmodelpath, 'Model')
-BrainBoundary = [Model.Boundary{strcmp(Model.AreaName, 'CTXpl')}; Model.Boundary{strcmp(Model.AreaName, 'SCs')}];
-BrainMask = false(AnalysisParameters.Pix,AnalysisParameters.Pix);
-for b = 1:length(BrainBoundary)
-    BrainMask(poly2mask(BrainBoundary{b}(:,1),BrainBoundary{b}(:,2),AnalysisParameters.Pix,AnalysisParameters.Pix)) = true;
-end
-alphaVal = 0.5;
-BrainMaskShade = BrainMask-BrainMask.*alphaVal;
-load(fullfile(AnalysisParameters.RefImgPath, sprintf('SessID_%d.mat', SessIDs{MouseNumbers(1)}(1))), 'RefImage');
-Model1=Model;BrainMask1=BrainMask;BrainMaskShade1=BrainMaskShade;RefImage1=RefImage;
-clear Model BrainMask BrainMaskShade RefImage
-
-Mouse = PlotMice{2};
-Allenmodelpath = [AnalysisParameters.AllenBrainModelDir '\' Mouse '_brainareamodel.mat'];
-load(Allenmodelpath, 'Model')
-BrainBoundary = [Model.Boundary{strcmp(Model.AreaName, 'CTXpl')}; Model.Boundary{strcmp(Model.AreaName, 'SCs')}];
-BrainMask = false(AnalysisParameters.Pix,AnalysisParameters.Pix);
-for b = 1:length(BrainBoundary)
-    BrainMask(poly2mask(BrainBoundary{b}(:,1),BrainBoundary{b}(:,2),AnalysisParameters.Pix,AnalysisParameters.Pix)) = true;
-end
-alphaVal = 0.5;
-BrainMaskShade = BrainMask-BrainMask.*alphaVal;
-load(fullfile(AnalysisParameters.RefImgPath, sprintf('SessID_%d.mat', SessIDs{MouseNumbers(2)}(1))), 'RefImage');
-Model2=Model;BrainMask2=BrainMask;BrainMaskShade2=BrainMaskShade;RefImage2=RefImage;
-clear Model BrainMask BrainMaskShade RefImage
-
-
-for Sess = 1:4
+for m = 1:length(SessIDs)
     
-    counter = 1;
-    for m = MouseNumbers
-        for c = PlotConds
-            Conditions(counter) = CondLUT.CondID(CondLUT.SessID == SessIDs{m}(Sess) & CondLUT.Cond == c);
-            counter = counter+1;
-        end
+    Mouse = Mice{m};
+    Allenmodelpath = [AnalysisParameters.AllenBrainModelDir '\' Mouse '_brainareamodel.mat'];
+    load(Allenmodelpath, 'Model')
+    BrainBoundary = [Model.Boundary{strcmp(Model.AreaName, 'CTXpl')}; Model.Boundary{strcmp(Model.AreaName, 'SCs')}];
+    BrainMask = false(AnalysisParameters.Pix,AnalysisParameters.Pix);
+    for b = 1:length(BrainBoundary)
+        BrainMask(poly2mask(BrainBoundary{b}(:,1),BrainBoundary{b}(:,2),AnalysisParameters.Pix,AnalysisParameters.Pix)) = true;
     end
+    alphaVal = 0.5;
+    BrainMaskShade = BrainMask-BrainMask.*alphaVal;
+    load(fullfile(AnalysisParameters.RefImgPath, sprintf('SessID_%d.mat', SessIDs{m}(1))), 'RefImage');
     
-    
-    %% load those sessions into memory
-    clear CondData
-    counter = 1;
-    for c = Conditions
-        load(fullfile(AnalysisParameters.CondWFDataPath, sprintf('CondID_%d.mat', c)), 'Cond_dFF_avg')
-        CondData(:,:,:,counter) = Cond_dFF_avg;
-        clear Cond_dFF_avg
-        counter = counter+1;
-    end
-    
+    c = CondLUT.CondID(CondLUT.SessID == SessIDs{m}(4) & CondLUT.Cond == pickedCond);
+    load(fullfile(AnalysisParameters.CondWFDataPath, sprintf('CondID_%d.mat', c)), 'Cond_dFF_avg')
     
     %% Plot the dFF of this Session
-    AnalysisParameters.Timeline = -200:50:550;
-    lims = [quantile(CondData(:),0.01) quantile(CondData(:),0.99)];
-    lims = [-max(abs(lims)) max(abs(lims))];   
+    
+    lims = [quantile(Cond_dFF_avg(:),0.01) quantile(Cond_dFF_avg(:),0.99)];
+    lims = [-max(abs(lims)) max(abs(lims))];
     
     
     %% make a video and store it
     
-    videoname = [AnalysisParameters.VideoPath '\' PlotMice{1} '_' PlotMice{2} '_' SessConds{Sess}];
+    videoname = [AnalysisParameters.VideoPath '\' Mouse '_' num2str(c) '_withArrow'];
     myVideo = VideoWriter(videoname);
-    myVideo.FrameRate = 1;
+    myVideo.FrameRate = 5;
     open(myVideo)
     for t = 1:length(AnalysisParameters.Timeline)
-        fh = figure('visible', 'off','Position', [309          52        1455         888]);
-        for x = 1:6
-            subplot(2,3,x)
-            if x <= 3
-                RefImage = RefImage1;
-                BrainMask = BrainMask1;
-                BrainMaskShade = BrainMaskShade1;
-                Model = Model1;
-            else
-                RefImage = RefImage2;
-                BrainMask = BrainMask2;
-                BrainMaskShade = BrainMaskShade2;
-                Model = Model2;
+        if any(any(~isnan(Cond_dFF_avg(:,:,t))))
+            fh = figure('visible', 'off','units','normalized');
+            %im = imagesc(RefImage);colormap gray;
+            %im.AlphaData = BrainMask;
+            %freezeColors
+            hold on
+            h=imagesc(Cond_dFF_avg(:,:,t),lims);
+            colormap(redblue)
+            clb = colorbar;
+            clb.Label.String = 'dFF';
+            cbfreeze(clb)
+            imAlpha = BrainMaskShade;imAlpha(isnan(Cond_dFF_avg(:,:,t))) = false;
+            h.AlphaData = imAlpha;
+            plot(Model.AllX,Model.AllY,'k.', 'MarkerSize', 1)
+            plot(ArrowPos.V1(m,1),ArrowPos.V1(m,2),'b*')
+            plot(ArrowPos.PPC(m,1),ArrowPos.PPC(m,2),'r*')
+            axis square
+            box off
+            axis off
+            title([CondLUT.CondWord{c} ' ' num2str(AnalysisParameters.Timeline(t)) ' ms'])
+            if AnalysisParameters.Timeline(t) >= 0 && AnalysisParameters.Timeline(t) <= round(TrialLUT.Stimdur(CondLUT.TrialIDs{c}(1)))*1000
+                annot = annotation('textbox',[.05 .9 0 0],'String','Stimulus ON' ,'FitBoxToText','on', 'EdgeColor', 'red', 'LineWidth', 2);
             end
-            if any(any(~isnan(CondData(:,:,t,x))))
-                im = imagesc(RefImage);colormap gray;
-                im.AlphaData = BrainMask;
-                freezeColors
-                hold on
-                h=imagesc(CondData(:,:,t,x),lims);
-                colormap(redblue)
-                clb = colorbar;
-                clb.Label.String = 'dFF';
-                cbfreeze(clb)
-                imAlpha = BrainMaskShade;imAlpha(isnan(CondData(:,:,t,x))) = false;
-                h.AlphaData = imAlpha;
-                plot(Model.AllX,Model.AllY,'k.', 'MarkerSize', 2)
-                axis square
-                box off
-                axis off
-                title([PlotCondNames{x} ' ' num2str(AnalysisParameters.Timeline(t)) ' ms'])
-                if AnalysisParameters.Timeline(t) >= 0 && AnalysisParameters.Timeline(t) <= 500
-                    annot = annotation('textbox',[.05 .9 0 0],'String','Stimulus ON' ,'FitBoxToText','on', 'EdgeColor', 'red', 'LineWidth', 2);
-                end
-                hold off
-            end
+            frame = getframe(fh);
+            writeVideo(myVideo,frame);
+            close(fh)
         end
-        frame = getframe(fh);
-        writeVideo(myVideo,frame);
-        close(fh)
     end
     close(myVideo)
     
     
+    
 end
+
 
 
 end
