@@ -4,6 +4,7 @@ if ~exist(fullfile(AnalysisParameters.DataTablePath,'EyeMotionTable.mat'), 'file
     EyeMotionTable = table();
     save(fullfile(AnalysisParameters.DataTablePath,'EyeMotionTable.mat'), 'EyeMotionTable');
 end
+load(AnalysisParameters.TrialLUTPath, 'TrialLUT')
 
 for s = 1:size(AnalyseDataDets.SessID,2)
     
@@ -14,12 +15,12 @@ for s = 1:size(AnalyseDataDets.SessID,2)
     
     load(fullfile(AnalysisParameters.DataTablePath,'EyeMotionTable.mat'), 'EyeMotionTable')
     load(AnalyseDataDets.LogfilePath{s}, 'Log_table')
-    nTrials = max(Log_table.Trial);
     
     
     %% make variables for table later
     
-    TrialIDs = (size(EyeMotionTable,1)+1:size(EyeMotionTable,1)+nTrials)';
+    TrialIDs = TrialLUT.TrialID(TrialLUT.SessID == AnalyseDataDets.SessID(s) );     %(size(EyeMotionTable,1)+1:size(EyeMotionTable,1)+nTrials)';
+    nTrials = length(TrialIDs);
     EyeX_tc = nan(nTrials, length(AnalysisParameters.Timeline));
     EyeY_tc = nan(nTrials, length(AnalysisParameters.Timeline));
     EyeH_tc = nan(nTrials, length(AnalysisParameters.Timeline));
@@ -50,7 +51,7 @@ for s = 1:size(AnalyseDataDets.SessID,2)
         
         attempts = 1;
         extractedData = false;
-        while attempts < 50 && ~extractedData
+        while attempts < 3 && ~extractedData
             try
                 [rawEye, rawTrigger, rawMotion] = readpupil(AnalyseDataDets.RawEyeMotionPath{s});
                 extractedData = true;
@@ -90,7 +91,7 @@ for s = 1:size(AnalyseDataDets.SessID,2)
             subplot(1,2,2);plot(diff(TrialStartTime));title(sprintf('After removing first triggers %d out of %d', length(TrialStartTime), nTrials));ylabel('ITI')
             keyboard %check if this makes sense
         elseif length(TrialStartTime) < nTrials                   % too few triggers
-            keyboard
+            nTrials = [];
         end
         
         

@@ -281,5 +281,6 @@ for M = 1:size(AnalysisParameters.Mice,2)
     
 end
 
+cd(AnalysisParameters.ScriptsDir)
 
 end

@@ -5,10 +5,6 @@ AnalysisParameters.RawDataDirectory = '\\VC2NIN\Mouse_Plasticity\RawData\';
 AnalysisParameters.DataDirectory = '\\VC2NIN\Mouse_Plasticity\ppData\';
 AnalysisParameters.pRFMappingDir = '\\VC2NIN\Mouse_Plasticity\pRFData\';
 AnalysisParameters.AllenBrainModelDir = '\\VC2NIN\Mouse_Plasticity\ppData\AllenBrainAlignment';
-% AnalysisParameters.RawDataDirectory = '\\vs02\VandC\BU\Lisa\RawData\';
-% AnalysisParameters.DataDirectory = '\\vs02\VandC\BU\Lisa\ppData\';
-% AnalysisParameters.pRFMappingDir = '\\vs02\VandC\BU\Lisa\pRFData\';
-% AnalysisParameters.AllenBrainModelDir = '\\vs02\VandC\BU\Lisa\ppData\AllenBrainAlignment';
 
 AnalysisParameters.RawEyeMotionDataDirectory = [AnalysisParameters.RawDataDirectory 'EyeMotionData\'];
 AnalysisParameters.LocalFolder = 'E:\Lisa\';
@@ -28,12 +24,14 @@ AnalysisParameters.ScaleFact = 0.5;
 AnalysisParameters.Pix = 800*AnalysisParameters.ScaleFact;
 AnalysisParameters.SmoothFact = 0;    
 AnalysisParameters.Exposure = 50;
-AnalysisParameters.Timeline = -AnalysisParameters.BaselineTime:AnalysisParameters.Exposure:AnalysisParameters.StimTime+AnalysisParameters.BaselineTime;
+AnalysisParameters.Timeline = -AnalysisParameters.BaselineTime:AnalysisParameters.Exposure:AnalysisParameters.StimTime+AnalysisParameters.PostStimTime;
 AnalysisParameters.Trial_zscore = 0;                                        % tried it, made it worse, don't use it!
 
 
 if strcmp(AnalysisParameters.Task, 'EasyOptoDetection_PassiveMultiLaser')
     AnalysisParameters.ExcludedSessions = {'Irri_20200121_B1', 'Jon_20200122_B1', 'Lysa_20200124_B1'};
+elseif strcmp(AnalysisParameters.Task, 'EasyOptoDetection_Passive')
+    AnalysisParameters.ExcludedSessions = {'Irri_20200121_B2', 'Jon_20200122_B2', 'Lysa_20200124_B2'};
 else
     AnalysisParameters.ExcludedSessions = {};
 end

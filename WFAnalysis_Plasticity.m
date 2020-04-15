@@ -6,7 +6,7 @@ clc
 %% Set the parameters
 AnalysisParameters.Project = 'Mouse_Plasticity';
 AnalysisParameters.Mice = {'Fergon', 'Hodor', 'Irri', 'Jon', 'Lysa'};                                                           
-Tasks = {'EasyOptoDetection_PassiveMultiLaser', 'EasyOptoDetection', 'EasyOptoDetectionReplay', 'EasyOptoDetection_Passive'};
+Tasks = {'EasyOptoDetection_PassiveMultiLaser', 'EasyOptoDetection', 'EasyOptoDetection_Passive'};
 Taskchoice = menu('Choose the Task',Tasks);
 AnalysisParameters.Task = Tasks{Taskchoice}; clear Tasks Taskchoice;
 
@@ -16,8 +16,9 @@ AnalysisParameters.RedoRegistration = 0;
 AnalysisParameters.ExcludeTrialsWithMotion = 1;
 AnalysisParameters.MotionThreshold = 15;
 AnalysisParameters.PlotFigures = 'off';
-AnalysisParameters.BaselineTime = 500;                                      % in ms
+AnalysisParameters.BaselineTime = 200;                                      % in ms
 AnalysisParameters.StimTime = 500;                                          % in ms
+AnalysisParameters.PostStimTime = 500;
 AnalysisParameters.ScriptsDir = pwd;
 AnalysisParameters.PlotAreas = {'VIS', 'VISp', 'VISal', 'VISam', 'VISl', 'VISli', 'VISpl', 'VISpm', 'VISpor', 'PTLp', 'CTXpl', 'SS', 'AUD', 'MO', 'RSP'};
 
@@ -59,6 +60,8 @@ plotTimecoursesSession(AnalyseDataDets, AnalysisParameters)
 %% Plot some timecourses
 if strcmp(AnalysisParameters.Task ,'EasyOptoDetection_PassiveMultiLaser')
     plotTimecourses_EasyOptoDetection_PassiveMultiLaser(AnalysisParameters)
+    makeCondVideos_EasyOptoDetection_PassiveMultiLaser(AnalysisParameters)
+    makeVideos_arrow_EasyOptoDetection_PassiveMultiLaser(AnalysisParameters)
 end
 
 

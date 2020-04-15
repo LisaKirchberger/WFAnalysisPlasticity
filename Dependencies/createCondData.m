@@ -25,13 +25,14 @@ for s = AnalyseDataDets.SessID
         
         % CondData = 400 x 400 x Time x Trials
         CondData = nan(AnalysisParameters.Pix,AnalysisParameters.Pix,length(AnalysisParameters.Timeline),length(wantedTrials), 'single');
+        Motion = [];
         
         % load in Data and put in CondData
         for t = 1:length(wantedTrials)
             filename = fullfile(AnalysisParameters.TrialWFDataPath, sprintf('TrialID_%d.mat', wantedTrials(t)));
             load(filename, 'TrialData')
             CondData(:,:,:,t) = TrialData;
-            Motion(t) = EyeMotionTable.Motion(EyeMotionTable.TrialIDs == wantedTrials(t));
+            Motion(t) = EyeMotionTable.Motion(EyeMotionTable.TrialIDs == wantedTrials(t)); %#ok<AGROW>
             clear TrialData
         end
         
