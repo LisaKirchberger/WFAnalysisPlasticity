@@ -20,28 +20,32 @@ for m = 1:length(Mice)
             for s = 1:length(wantedSessions)
                 SessIDs{m}(s) = SessionLUT.SessID( strcmp(SessionLUT.LogfileName, wantedSessions{s} )  ); %#ok<*AGROW>
             end
-            ArrowPos{m}= [];
+            ArrowPos.V1(m,:) = [287.1328 316.91];
+            ArrowPos.PPC(m,:)= [263.4442 277.6574];
         case 'Hodor'
             wantedSessions = {'Hodor_20191022_B1', 'Hodor_20191127_B3', 'Hodor_20191211_B2', 'Hodor_20191218_B2'};
             LearningMouse(m) = true;
             for s = 1:length(wantedSessions)
                 SessIDs{m}(s) = SessionLUT.SessID( strcmp(SessionLUT.LogfileName, wantedSessions{s} )  ); %#ok<*AGROW>
             end
-            ArrowPos{m}= [];
+            ArrowPos.V1(m,:) = [291.1061 303.8333];
+            ArrowPos.PPC(m,:)= [256.5606 269.2879];
         case 'Irri'
             wantedSessions = {'Irri_20200127_B1', 'Irri_20200128_B2', 'Irri_20200211_B2', 'Irri_20200225_B2'};
             LearningMouse(m) = false;
             for s = 1:length(wantedSessions)
                 SessIDs{m}(s) = SessionLUT.SessID( strcmp(SessionLUT.LogfileName, wantedSessions{s} )  ); %#ok<*AGROW>
             end
-            ArrowPos{m}= [];
+            ArrowPos.V1(m,:) = [317.7727 300.8030];
+            ArrowPos.PPC(m,:)= [288.0758 268.0758];
         case 'Jon'
             wantedSessions = {'Jon_20200127_B1', 'Jon_20200129_B2', 'Jon_20200212_B2', 'Jon_20200219_B2'};
             LearningMouse(m) = false;
             for s = 1:length(wantedSessions)
                 SessIDs{m}(s) = SessionLUT.SessID( strcmp(SessionLUT.LogfileName, wantedSessions{s} )  ); %#ok<*AGROW>
             end
-            ArrowPos{m}= [];
+            ArrowPos.V1(m,:) = [290.5000 291.1061];
+            ArrowPos.PPC(m,:)= [251.7121 256.5606];
         case 'Lysa'
             % not enough data yet
             continue
@@ -50,7 +54,8 @@ for m = 1:length(Mice)
             for s = 1:length(wantedSessions)
                 SessIDs{m}(s) = SessionLUT.SessID( strcmp(SessionLUT.LogfileName, wantedSessions{s} )  ); %#ok<*AGROW>
             end
-            ArrowPos{m}= [];
+            ArrowPos.V1(m,:) = [NaN NaN];
+            ArrowPos.PPC(m,:)= [NaN NaN];
     end
 end
 
@@ -59,7 +64,7 @@ end
 
 for m = 1:length(Mice)
     Mouse = Mice{m};
-    if isempty(ArrowPos{m})
+    if any(isnan(ArrowPos.V1(m,:)))
         % get a crisp image by averaging across many raw images during the baseline period
         tmpImages = nan(AnalysisParameters.Pix,AnalysisParameters.Pix,100);
         imageCounter = 1;
@@ -84,6 +89,8 @@ for m = 1:length(Mice)
         clear tmpImage tmpImages imageCounter SessFolders wantedFiles TM avgImage
     end
 end
+
+
 
 
 %% Make overview video for the 4 stages contrasting learning and control mice
