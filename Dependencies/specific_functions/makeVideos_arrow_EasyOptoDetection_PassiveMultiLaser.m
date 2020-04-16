@@ -125,9 +125,9 @@ for m = 1:length(SessIDs)
     for t = 1:length(AnalysisParameters.Timeline)
         if any(any(~isnan(Cond_dFF_avg(:,:,t))))
             fh = figure('visible', 'off','units','normalized');
-            %im = imagesc(RefImage);colormap gray;
-            %im.AlphaData = BrainMask;
-            %freezeColors
+            im = imagesc(RefImage);colormap gray;
+            im.AlphaData = BrainMask;
+            freezeColors
             hold on
             h=imagesc(Cond_dFF_avg(:,:,t),lims);
             colormap(redblue)
