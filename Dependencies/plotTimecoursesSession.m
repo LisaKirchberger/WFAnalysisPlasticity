@@ -8,7 +8,7 @@ load(fullfile(AnalysisParameters.DataTablePath,'CondTimecourseTable.mat'), 'Cond
 
 for s = AnalyseDataDets.SessID
     
-    Mouse = AnalyseDataDets.Mouse{s};
+    Mouse = char(SessionLUT.MouseName(s));
     SessFolderName = fullfile(AnalysisParameters.TimecoursePlotPath, 'Sessions', ['SessID_' num2str(s) '_' SessionLUT.LogfileName{SessionLUT.SessID==s}]);
     CondIDs = CondLUT.CondID(CondLUT.SessID == s);
     

@@ -1,6 +1,6 @@
 function createEyeMotionTable(AnalyseDataDets,AnalysisParameters)
 
-if ~exist(fullfile(AnalysisParameters.DataTablePath,'EyeMotionTable.mat'), 'file')
+if ~exist(fullfile(AnalysisParameters.DataTablePath,'EyeMotionTable.mat'), 'file') || AnalysisParameters.OverwriteData
     EyeMotionTable = table();
     save(fullfile(AnalysisParameters.DataTablePath,'EyeMotionTable.mat'), 'EyeMotionTable');
 end
@@ -29,7 +29,7 @@ for s = 1:size(AnalyseDataDets.SessID,2)
     
     %% if there is no Eye and rawMotion Data for this session, fill the table with NaNs and continue to next session
     
-    if isempty(AnalyseDataDets.RawEyeMotionPath{s}) && ~exist(AnalyseDataDets.EyeMotionPath{s}, 'file')
+    if isempty(AnalyseDataDets.RawEyeMotionPath{s})
         EyeX = nanmean(EyeX_tc,2);
         EyeY = nanmean(EyeY_tc,2);
         EyeH = nanmean(EyeH_tc,2);
@@ -45,7 +45,7 @@ for s = 1:size(AnalyseDataDets.SessID,2)
     
     %% Extract Eye and rawMotion Data if hasn't been exctracted yet
     
-    if ~exist(AnalyseDataDets.EyeMotionPath{s}, 'file')
+    if ~exist(AnalyseDataDets.EyeMotionPath{s}, 'file') || AnalysisParameters.OverwriteData
         
         %% read in Eye and rawMotion Data (can take several tries!)
         

@@ -5,12 +5,12 @@ clc
 
 %% Set the parameters
 AnalysisParameters.Project = 'Mouse_Plasticity';
-AnalysisParameters.Mice = {'Fergon', 'Hodor', 'Irri', 'Jon', 'Lysa'};                                                           
+AnalysisParameters.Mice = {'Fergon', 'Hodor', 'Irri', 'Jon', 'Lysa', 'Meryn', 'Ned', 'Osha', 'Pyat'};                                                           
 Tasks = {'EasyOptoDetection_PassiveMultiLaser', 'EasyOptoDetection', 'EasyOptoDetection_Passive'};
 Taskchoice = menu('Choose the Task',Tasks);
 AnalysisParameters.Task = Tasks{Taskchoice}; clear Tasks Taskchoice;
 
-AnalysisParameters.OverwriteData = 1;
+AnalysisParameters.OverwriteData = 0;
 AnalysisParameters.RedoAllenBrainAlignment = 0;
 AnalysisParameters.RedoRegistration = 0;
 AnalysisParameters.ExcludeTrialsWithMotion = 1;

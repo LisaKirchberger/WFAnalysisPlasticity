@@ -53,8 +53,11 @@ for s = AnalyseDataDets.SessID
             AreaPixelResponse = dFF_Trial(myMask);
             AreaPixelResponse = nanmean(reshape(AreaPixelResponse, [numPixels, length(wantedTrials)]),1);
             % z-score the data and remove trials with a z-score >1.5 and <-1.5
-            Z = normalize(AreaPixelResponse);
-            includedTrials = ~(abs(Z)>1.5);
+            AreaPixelRespz = AreaPixelResponse(~isnan(AreaPixelResponse));
+            Z1 = zscore(AreaPixelRespz);
+            Z = nan(1,length(wantedTrials));
+            Z(~isnan(AreaPixelResponse)) = Z1;
+            includedTrials = ~(abs(Z)>1.5) & ~isnan(Z);
         else
             includedTrials = true(1,length(wantedTrials));
         end

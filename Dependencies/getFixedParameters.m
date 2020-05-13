@@ -25,11 +25,11 @@ AnalysisParameters.Pix = 800*AnalysisParameters.ScaleFact;
 AnalysisParameters.SmoothFact = 0;    
 AnalysisParameters.Exposure = 50;
 AnalysisParameters.Timeline = -AnalysisParameters.BaselineTime:AnalysisParameters.Exposure:AnalysisParameters.StimTime+AnalysisParameters.PostStimTime;
-AnalysisParameters.Trial_zscore = 0;                                        % tried it, made it worse, don't use it!
+AnalysisParameters.Trial_zscore = 1;                                        % tried it, made it worse, don't use it!
 
 
 if strcmp(AnalysisParameters.Task, 'EasyOptoDetection_PassiveMultiLaser')
-    AnalysisParameters.ExcludedSessions = {'Irri_20200121_B1', 'Jon_20200122_B1', 'Lysa_20200124_B1'};
+    AnalysisParameters.ExcludedSessions = {'Irri_20200121_B1', 'Jon_20200122_B1', 'Lysa_20200124_B1', 'Pyat_20200428_B1', 'Meryn_20200429_B1'};
 elseif strcmp(AnalysisParameters.Task, 'EasyOptoDetection_Passive')
     AnalysisParameters.ExcludedSessions = {'Irri_20200121_B2', 'Jon_20200122_B2', 'Lysa_20200124_B2'};
 else
