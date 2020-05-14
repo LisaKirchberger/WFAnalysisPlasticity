@@ -5,11 +5,13 @@ for s = AnalyseDataDets.SessID
     fprintf('Creating condition data for SessionID %s  \n', num2str(s))
     
     %% load in newest version of the lookup tables and the already processed data and the logfile
-    
+
     load(AnalysisParameters.TrialLUTPath)
     load(AnalysisParameters.SessionLUTPath)
     load(AnalysisParameters.CondLUTPath)
     load(fullfile(AnalysisParameters.DataTablePath,'EyeMotionTable.mat'), 'EyeMotionTable')
+    Mouse = char(SessionLUT.MouseName(s));
+    
     
     %% Conditions
     
@@ -45,7 +47,7 @@ for s = AnalyseDataDets.SessID
             % take average over time
             dFF_Trial = squeeze(nanmean(dFF,3));
             % extract the brain pixels
-            Allenmodelpath = [AnalysisParameters.AllenBrainModelDir '\' AnalyseDataDets.Mouse{s} '_brainareamodel.mat'];
+            Allenmodelpath = [AnalysisParameters.AllenBrainModelDir '\' Mouse '_brainareamodel.mat'];
             load(Allenmodelpath, 'Model')
             Area = 'CTXpl';
             myMask = repmat(Model.AreaMask{strcmp(Model.AreaName, Area)},[1,1,length(wantedTrials)]);

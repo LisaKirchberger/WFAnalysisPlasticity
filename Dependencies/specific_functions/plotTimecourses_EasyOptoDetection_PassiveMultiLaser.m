@@ -1,5 +1,7 @@
 function plotTimecourses_EasyOptoDetection_PassiveMultiLaser(AnalysisParameters)
 
+warning('off','MATLAB:ui:actxcontrol:FunctionToBeRemoved')
+
 %% load in the Trial & Condition % Session LUT
 
 load(AnalysisParameters.SessionLUTPath, 'SessionLUT')
@@ -14,34 +16,65 @@ for m = 1:length(Mice)
     Mouse = Mice{m};
     switch Mouse
         case 'Fergon'
+            SessionTitlesAll{m}={'pre-training', '1st exposure', 'intermediate', 'expert'};
             wantedSessions = {'Fergon_20191022_B1', 'Fergon_20191119_B2', 'Fergon_20191203_B2', 'Fergon_20191217_B3'};
             LearningMouse(m) = true;
             for s = 1:length(wantedSessions)
                 SessIDs{m}(s) = SessionLUT.SessID( strcmp(SessionLUT.LogfileName, wantedSessions{s} )  ); %#ok<*AGROW>
             end
         case 'Hodor'
+            SessionTitlesAll{m}={'pre-training', '1st exposure', 'intermediate', 'expert'};
             wantedSessions = {'Hodor_20191022_B1', 'Hodor_20191127_B3', 'Hodor_20191211_B2', 'Hodor_20191218_B2'};
             LearningMouse(m) = true;
             for s = 1:length(wantedSessions)
                  SessIDs{m}(s) = SessionLUT.SessID( strcmp(SessionLUT.LogfileName, wantedSessions{s} )  ); %#ok<*AGROW>
             end
         case 'Irri'
+            SessionTitlesAll{m}={'pre-training', '1st exposure', 'intermediate', 'expert'};
             wantedSessions = {'Irri_20200127_B1', 'Irri_20200128_B2', 'Irri_20200211_B2', 'Irri_20200225_B2'};
             LearningMouse(m) = false;
             for s = 1:length(wantedSessions)
                  SessIDs{m}(s) = SessionLUT.SessID( strcmp(SessionLUT.LogfileName, wantedSessions{s} )  ); %#ok<*AGROW>
             end
         case 'Jon'
+            SessionTitlesAll{m}={'pre-training', '1st exposure', 'intermediate', 'expert'};
             wantedSessions = {'Jon_20200127_B1', 'Jon_20200129_B2', 'Jon_20200212_B2', 'Jon_20200219_B2'};
             LearningMouse(m) = false;
             for s = 1:length(wantedSessions)
                  SessIDs{m}(s) = SessionLUT.SessID( strcmp(SessionLUT.LogfileName, wantedSessions{s} )  ); %#ok<*AGROW>
             end
         case 'Lysa'
-            % not enough data yet
-            continue
-            wantedSessions = {'Lysa_20200124_B4'};
+            SessionTitlesAll{m}={'awake', 'week1 anesthetized'};
+            wantedSessions = {'Lysa_20200124_B4', 'Lysa_20200428_B1'};
             LearningMouse(m) = true;
+            for s = 1:length(wantedSessions)
+                SessIDs{m}(s) = SessionLUT.SessID( strcmp(SessionLUT.LogfileName, wantedSessions{s} )  ); %#ok<*AGROW>
+            end
+        case 'Meryn'
+            SessionTitlesAll{m}={'anesth. week 4', 'anesth. week 5', 'anesth. week 6'};
+            wantedSessions = {'Meryn_20200429_B2', 'Meryn_20200505_B1', 'Meryn_20200512_B1'};
+            LearningMouse(m) = false;
+            for s = 1:length(wantedSessions)
+                SessIDs{m}(s) = SessionLUT.SessID( strcmp(SessionLUT.LogfileName, wantedSessions{s} )  ); %#ok<*AGROW>
+            end
+        case 'Ned'
+            SessionTitlesAll{m}={'anesth. week 5', 'anesth. week 6'};
+            wantedSessions = {'Ned_20200506_B1', 'Ned_20200512_B1'};
+            LearningMouse(m) = false;
+            for s = 1:length(wantedSessions)
+                SessIDs{m}(s) = SessionLUT.SessID( strcmp(SessionLUT.LogfileName, wantedSessions{s} )  ); %#ok<*AGROW>
+            end
+        case 'Osha'
+            SessionTitlesAll{m}={'anesth. week 5', 'anesth. week 6'};
+            wantedSessions = {'Osha_20200506_B1', 'Osha_20200512_B1'};
+            LearningMouse(m) = false;
+            for s = 1:length(wantedSessions)
+                SessIDs{m}(s) = SessionLUT.SessID( strcmp(SessionLUT.LogfileName, wantedSessions{s} )  ); %#ok<*AGROW>
+            end
+        case 'Pyat'
+            SessionTitlesAll{m}={'anesth. week 5', 'anesth. week 6'};
+            wantedSessions = {'Pyat_20200505_B1', 'Pyat_20200512_B1'};
+            LearningMouse(m) = false;
             for s = 1:length(wantedSessions)
                  SessIDs{m}(s) = SessionLUT.SessID( strcmp(SessionLUT.LogfileName, wantedSessions{s} )  ); %#ok<*AGROW>
             end
@@ -57,6 +90,7 @@ for m = 1:length(SessIDs)
     
     Mouse = Mice{m};
     
+    CondIDs = [];
     for s = 1:length(SessIDs{m})
         CondIDs{s} = CondLUT.CondID(CondLUT.SessID ==  SessIDs{m}(s));
     end
@@ -70,7 +104,7 @@ for m = 1:length(SessIDs)
     
     %% plot it for one area and make plots and images
     
-    SessionTitles = {'pre-training', '1st exposure', 'intermediate', 'expert'};
+    SessionTitles = SessionTitlesAll{m};
     Area = 'VISp';
     
     figure('visible', AnalysisParameters.PlotFigures)
@@ -80,7 +114,7 @@ for m = 1:length(SessIDs)
     title(Area)
     Positions = [2 3 5 6];
     for s = 1:length(SessIDs{m})
-        AxesHandle(s) = subplot(2,3,Positions(s)); %#ok<AGROW>
+        AxesHandle(s) = subplot(2,3,Positions(s)); 
         plot(AnalysisParameters.Timeline./1000, zeros(length(AnalysisParameters.Timeline),1), 'k--');hold on
         Colors = jet(length(CondIDs{s}));
         for c = 1:length(CondIDs{s})
@@ -92,6 +126,8 @@ for m = 1:length(SessIDs)
         xlabel('Time (s)')
         ylabel('dFF')
         title({SessionTitles{s}; ' '})
+        axis tight
+        xlim([-0.2 0.55])
     end
     allYLim = get(AxesHandle, {'YLim'});
     allYLim = cat(2, allYLim{:});
@@ -99,6 +135,7 @@ for m = 1:length(SessIDs)
     set(AxesHandle, 'XLim', [-0.2 0.55])
     set(AxesHandle, 'TickDir', 'out')
     set(AxesHandle, 'Box', 'off')
+    close(gcf), clear AxesHandle
     
     
     %% one with legend to get the legend for presentations etc
@@ -115,6 +152,8 @@ for m = 1:length(SessIDs)
         plot(AnalysisParameters.Timeline./1000, timecourse, 'Color', Colors(c,:), 'LineWidth', 1)
     end
     box off
+    axis tight
+    xlim([-0.2 0.55])
     xlabel('Time (s)')
     ylabel('dFF')
     legend(legendtext)
@@ -160,6 +199,8 @@ for m = 1:length(SessIDs)
                 xlabel('Time (s)')
                 ylabel('dFF')
                 title({SessionTitles{s}; ' '})
+                axis tight
+                xlim([-0.2 0.55])
             end
             allYLim = get(AxesHandle, {'YLim'});
             allYLim = cat(2, allYLim{:});
@@ -174,7 +215,7 @@ for m = 1:length(SessIDs)
             end
             FigName = fullfile(AnalysisParameters.TimecoursePlotPath,Hemispheres{h}, [Mouse '_' Area]);
             saveas(gcf, FigName, 'tiff')
-            close(gcf)
+            close(gcf), clear AxesHandle
         end
     end
     
@@ -183,10 +224,5 @@ end
 
 %% now plot average for learning and control mice
 
-ExpGroups = {'Learning', 'Control'};
-
-for group = 1:2
-%    keyboard
-end
 
 end

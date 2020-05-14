@@ -2,6 +2,7 @@ function makeCondVideos(AnalyseDataDets,AnalysisParameters)
 
 %% load in the Trial & Condition % Session LUT
 
+warning('off','MATLAB:ui:actxcontrol:FunctionToBeRemoved')
 load(AnalysisParameters.TrialLUTPath, 'TrialLUT')
 load(AnalysisParameters.CondLUTPath, 'CondLUT')
 load(AnalysisParameters.SessionLUTPath, 'SessionLUT')

@@ -2,6 +2,8 @@
 clear all %#ok<CLALL>
 close all
 clc
+warning('off','MATLAB:ui:actxcontrol:FunctionToBeRemoved')
+
 
 %% Set the parameters
 AnalysisParameters.Project = 'Mouse_Plasticity';
