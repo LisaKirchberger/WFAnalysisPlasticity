@@ -51,29 +51,29 @@ for m = 1:length(Mice)
                 SessIDs{m}(s) = SessionLUT.SessID( strcmp(SessionLUT.LogfileName, wantedSessions{s} )  ); %#ok<*AGROW>
             end
         case 'Meryn'
-            SessionTitlesAll{m}={'anesth. week 4', 'anesth. week 5', 'anesth. week 6'};
-            wantedSessions = {'Meryn_20200429_B2', 'Meryn_20200505_B1', 'Meryn_20200512_B1'};
+            SessionTitlesAll{m}={'anesth. week 5', 'anesth. week 6', 'anesth. week 7', 'anesth. week 8'};
+            wantedSessions = {'Meryn_20200505_B1', 'Meryn_20200512_B1', 'Meryn_20200519_B1', 'Meryn_20200526_B1'};
             LearningMouse(m) = false;
             for s = 1:length(wantedSessions)
                 SessIDs{m}(s) = SessionLUT.SessID( strcmp(SessionLUT.LogfileName, wantedSessions{s} )  ); %#ok<*AGROW>
             end
         case 'Ned'
-            SessionTitlesAll{m}={'anesth. week 5', 'anesth. week 6'};
-            wantedSessions = {'Ned_20200506_B1', 'Ned_20200512_B1'};
+            SessionTitlesAll{m}={'anesth. week 5', 'anesth. week 6', 'anesth. week 7', 'anesth. week 8'};
+            wantedSessions = {'Ned_20200506_B1', 'Ned_20200512_B1', 'Ned_20200519_B1', 'Ned_20200526_B1'};
             LearningMouse(m) = false;
             for s = 1:length(wantedSessions)
                 SessIDs{m}(s) = SessionLUT.SessID( strcmp(SessionLUT.LogfileName, wantedSessions{s} )  ); %#ok<*AGROW>
             end
         case 'Osha'
-            SessionTitlesAll{m}={'anesth. week 5', 'anesth. week 6'};
-            wantedSessions = {'Osha_20200506_B1', 'Osha_20200512_B1'};
+            SessionTitlesAll{m}={'anesth. week 5', 'anesth. week 6', 'anesth. week 7', 'anesth. week 8'};
+            wantedSessions = {'Osha_20200506_B1', 'Osha_20200512_B1', 'Osha_20200519_B1', 'Osha_20200526_B1'};
             LearningMouse(m) = false;
             for s = 1:length(wantedSessions)
                 SessIDs{m}(s) = SessionLUT.SessID( strcmp(SessionLUT.LogfileName, wantedSessions{s} )  ); %#ok<*AGROW>
             end
         case 'Pyat'
-            SessionTitlesAll{m}={'anesth. week 5', 'anesth. week 6'};
-            wantedSessions = {'Pyat_20200505_B1', 'Pyat_20200512_B1'};
+            SessionTitlesAll{m}={'anesth. week 5', 'anesth. week 6', 'anesth. week 7', 'anesth. week 8'};
+            wantedSessions = {'Pyat_20200505_B1', 'Pyat_20200512_B1', 'Pyat_20200519_B1', 'Pyat_20200526_B1'};
             LearningMouse(m) = false;
             for s = 1:length(wantedSessions)
                  SessIDs{m}(s) = SessionLUT.SessID( strcmp(SessionLUT.LogfileName, wantedSessions{s} )  ); %#ok<*AGROW>
@@ -106,21 +106,25 @@ for m = 1:length(SessIDs)
     
     SessionTitles = SessionTitlesAll{m};
     Area = 'VISp';
+    TCData = [];
+    wantedTP = AnalysisParameters.Timeline./1000>0 &  AnalysisParameters.Timeline./1000<=0.5;
     
-    figure('visible', AnalysisParameters.PlotFigures)
-    subplot(2,3,[1 4])
-    imagesc(Model.AreaMask{strcmp(Model.AreaName, Area)});axis square; box off; AdvancedColormap('w b'); axis off; hold on;freezeColors
+    figure('visible', AnalysisParameters.PlotFigures,'Position',[917   422   780   420])
+    subplot(2,4,[1 5])
+    imagesc(Model.AreaMask{strcmp(Model.AreaName, Area)});axis square; box off; AdvancedColormap('w b'), axis off, hold on %,freezeColors
     plot(Model.AllX, Model.AllY, 'k.', 'MarkerSize', 0.1)
     title(Area)
-    Positions = [2 3 5 6];
+    Positions = [2 3 6 7];
     for s = 1:length(SessIDs{m})
-        AxesHandle(s) = subplot(2,3,Positions(s)); 
+        AxesHandle(s) = subplot(2,4,Positions(s)); 
         plot(AnalysisParameters.Timeline./1000, zeros(length(AnalysisParameters.Timeline),1), 'k--');hold on
         Colors = jet(length(CondIDs{s}));
         for c = 1:length(CondIDs{s})
             myRow = find(CondTimecourseTable.CondID == CondIDs{s}(c)); %#ok<NASGU>
             eval(['timecourse = CondTimecourseTable.' Area '(myRow,:);'])
             plot(AnalysisParameters.Timeline./1000, timecourse, 'Color', Colors(c,:))
+                                                                            %TCData(s,c)=nanmean(timecourse(wantedTP));
+            TCData(s,c)=trapz( AnalysisParameters.Timeline(wantedTP) , timecourse(wantedTP) );
         end
         box off
         xlabel('Time (s)')
@@ -135,6 +139,12 @@ for m = 1:length(SessIDs)
     set(AxesHandle, 'XLim', [-0.2 0.55])
     set(AxesHandle, 'TickDir', 'out')
     set(AxesHandle, 'Box', 'off')
+    subplot(2,4,[4,8])
+    for c = 1:length(CondIDs{s})
+        plot(1:size(TCData,1), TCData(:,c),'*-', 'Color', Colors(c,:)),hold on
+    end
+    axis square, box off, axis tight,xlim([0.5 4.5]),set(gca,'TickDir','out'),ylabel('dFF'),set(gca,'XTick',[1 2 3 4]),set(gca,'xticklabel',{[]})
+    title({'AUC'; '0-0.5s'})
     close(gcf), clear AxesHandle
     
     
@@ -149,7 +159,7 @@ for m = 1:length(SessIDs)
     for c = length(CondIDs{s}):-1:1
         myRow = find(CondTimecourseTable.CondID == CondIDs{s}(c)); %#ok<NASGU>
         eval(['timecourse = CondTimecourseTable.' Area '(myRow,:);'])
-        plot(AnalysisParameters.Timeline./1000, timecourse, 'Color', Colors(c,:), 'LineWidth', 1)
+        plot(AnalysisParameters.Timeline./1000, timecourse, 'Color', Colors(c,:), 'LineWidth', 1.5)
     end
     box off
     axis tight
@@ -158,7 +168,7 @@ for m = 1:length(SessIDs)
     ylabel('dFF')
     legend(legendtext)
     title({SessionTitles{s}; ' '})
-    FigName = fullfile(AnalysisParameters.TimecoursePlotPath, [Mouse '_XYZ_Legend']);
+    FigName = fullfile(AnalysisParameters.TimecoursePlotPath, 'Legend');
     saveas(gcf, FigName, 'tiff')
     close(gcf)
     
@@ -177,23 +187,25 @@ for m = 1:length(SessIDs)
         AreaMasks = AreaMasks_all{h};
         load(Filenames{h}, 'CondTimecourseTable')
         
+        
         for a = 1:length(AreaNames)
             Area = AreaNames{a};
             
-            figure('visible', 'off')
-            subplot(2,3,[1 4])
-            imagesc(AreaMasks{strcmp(Model.AreaName, Area)});axis square; box off; AdvancedColormap('w b'); axis off; hold on;freezeColors
+            TCData = [];
+            figure('visible', AnalysisParameters.PlotFigures,'Position',[917   422   780   420])
+            subplot(2,4,[1 5])
+            imagesc(AreaMasks{strcmp(Model.AreaName, Area)});axis square; box off; AdvancedColormap('w b'), axis off, hold on%,freezeColors
             plot(Model.AllX, Model.AllY, 'k.', 'MarkerSize', 0.1)
             title(Area)
-            Positions = [2 3 5 6];
             for s = 1:length(SessIDs{m})
-                AxesHandle(s) = subplot(2,3,Positions(s));
+                AxesHandle(s) = subplot(2,4,Positions(s));
                 plot(AnalysisParameters.Timeline./1000, zeros(length(AnalysisParameters.Timeline),1), 'k--');hold on
                 Colors = jet(length(CondIDs{s}));
                 for c = 1:length(CondIDs{s})
                     myRow = find(CondTimecourseTable.CondID == CondIDs{s}(c)); %#ok<NASGU>
                     eval(['timecourse = CondTimecourseTable.' Area '(myRow,:);'])
                     plot(AnalysisParameters.Timeline./1000, timecourse, 'Color', Colors(c,:), 'LineWidth', 1)
+                    TCData(s,c)=trapz( AnalysisParameters.Timeline(wantedTP) , timecourse(wantedTP) );
                 end
                 box off
                 xlabel('Time (s)')
@@ -208,12 +220,18 @@ for m = 1:length(SessIDs)
             set(AxesHandle, 'XLim', [-0.2 0.55])
             set(AxesHandle, 'TickDir', 'out')
             set(AxesHandle, 'Box', 'off')
+            subplot(2,4,[4,8])
+            for c = 1:length(CondIDs{s})
+                plot(1:size(TCData,1), TCData(:,c),'*-', 'Color', Colors(c,:), 'LineWidth', 1),hold on
+            end
+            axis square, box off, axis tight,xlim([0.5 4.5]),set(gca,'TickDir','out'),ylabel('dFF'),set(gca,'XTick',[1 2 3 4]),set(gca,'xticklabel',{[]})
+            title({'AUC'; '0-0.5s'})
             
             % save & close figure
             if ~exist(fullfile(AnalysisParameters.TimecoursePlotPath,Hemispheres{h}), 'dir')
                 mkdir(fullfile(AnalysisParameters.TimecoursePlotPath,Hemispheres{h}))
             end
-            FigName = fullfile(AnalysisParameters.TimecoursePlotPath,Hemispheres{h}, [Mouse '_' Area]);
+            FigName = fullfile(AnalysisParameters.TimecoursePlotPath,Hemispheres{h}, [Area '_' Mouse]);
             saveas(gcf, FigName, 'tiff')
             close(gcf), clear AxesHandle
         end
@@ -221,8 +239,6 @@ for m = 1:length(SessIDs)
     
 end
 
-
-%% now plot average for learning and control mice
 
 
 end

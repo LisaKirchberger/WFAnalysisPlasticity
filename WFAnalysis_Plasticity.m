@@ -12,7 +12,7 @@ Tasks = {'EasyOptoDetection_PassiveMultiLaser', 'EasyOptoDetection', 'EasyOptoDe
 Taskchoice = menu('Choose the Task',Tasks);
 AnalysisParameters.Task = Tasks{Taskchoice}; clear Tasks Taskchoice;
 
-AnalysisParameters.OverwriteData = 0;
+AnalysisParameters.OverwriteData = 1;
 AnalysisParameters.RedoAllenBrainAlignment = 0;
 AnalysisParameters.RedoRegistration = 0;
 AnalysisParameters.ExcludeTrialsWithMotion = 1;
@@ -23,6 +23,7 @@ AnalysisParameters.StimTime = 500;                                          % in
 AnalysisParameters.PostStimTime = 500;
 AnalysisParameters.ScriptsDir = pwd;
 AnalysisParameters.PlotAreas = {'VIS', 'VISp', 'VISal', 'VISam', 'VISl', 'VISli', 'VISpl', 'VISpm', 'VISpor', 'PTLp', 'CTXpl', 'SS', 'AUD', 'MO', 'RSP'};
+
 
 %% Add needed functions
 cd(AnalysisParameters.ScriptsDir)
@@ -64,6 +65,7 @@ if strcmp(AnalysisParameters.Task ,'EasyOptoDetection_PassiveMultiLaser')
     plotTimecourses_EasyOptoDetection_PassiveMultiLaser(AnalysisParameters)
     makeCondVideos_EasyOptoDetection_PassiveMultiLaser(AnalysisParameters)
     makeVideos_arrow_EasyOptoDetection_PassiveMultiLaser(AnalysisParameters)
+    plotTimecourses_AVG_MultiLaser(AnalysisParameters)
 end
 
 

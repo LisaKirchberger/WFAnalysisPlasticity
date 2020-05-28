@@ -89,7 +89,7 @@ for s = 1:size(AnalyseDataDets.SessID,2)
             figure;subplot(1,2,1);plot(diff(TrialStartTime));title(sprintf('Too many triggers %d out of %d', length(TrialStartTime), nTrials));ylabel('ITI')
             TrialStartTime = TrialStartTime(length(TrialStartTime)-nTrials+1:end);
             subplot(1,2,2);plot(diff(TrialStartTime));title(sprintf('After removing first triggers %d out of %d', length(TrialStartTime), nTrials));ylabel('ITI')
-            keyboard %check if this makes sense
+            %keyboard %check if this makes sense
         elseif length(TrialStartTime) < nTrials                   % too few triggers
             nTrials = [];
         end
