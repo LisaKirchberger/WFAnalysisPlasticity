@@ -12,7 +12,7 @@ Tasks = {'EasyOptoDetection_PassiveMultiLaser', 'EasyOptoDetection', 'EasyOptoDe
 Taskchoice = menu('Choose the Task',Tasks);
 AnalysisParameters.Task = Tasks{Taskchoice}; clear Tasks Taskchoice;
 
-AnalysisParameters.OverwriteData = 1;
+AnalysisParameters.OverwriteData = 0;
 AnalysisParameters.RedoAllenBrainAlignment = 0;
 AnalysisParameters.RedoRegistration = 0;
 AnalysisParameters.ExcludeTrialsWithMotion = 1;
@@ -21,7 +21,7 @@ AnalysisParameters.PlotFigures = 'off';
 AnalysisParameters.BaselineTime = 200;                                      % in ms
 AnalysisParameters.StimTime = 500;                                          % in ms
 AnalysisParameters.PostStimTime = 500;
-AnalysisParameters.ScriptsDir = pwd;
+AnalysisParameters.ScriptsDir = 'D:\GitHub\WFAnalysisPlasticity';
 AnalysisParameters.PlotAreas = {'VIS', 'VISp', 'VISal', 'VISam', 'VISl', 'VISli', 'VISpl', 'VISpm', 'VISpor', 'PTLp', 'CTXpl', 'SS', 'AUD', 'MO', 'RSP'};
 
 
@@ -66,6 +66,7 @@ if strcmp(AnalysisParameters.Task ,'EasyOptoDetection_PassiveMultiLaser')
     makeCondVideos_EasyOptoDetection_PassiveMultiLaser(AnalysisParameters)
     makeVideos_arrow_EasyOptoDetection_PassiveMultiLaser(AnalysisParameters)
     plotTimecourses_AVG_MultiLaser(AnalysisParameters)
+    extractTdTomFluor(AnalysisParameters)
 end
 
 
