@@ -19,6 +19,13 @@ ImagingWeekShift = [5 5 5 5];
 SessionLUT.ImagingWeek = SessionLUT.MouseSessID;
 for m = 1:length(ExpGroup{3})
     SessionLUT.ImagingWeek(strcmp(SessionLUT.MouseName,ExpGroup{3}{m}))=SessionLUT.MouseSessID(strcmp(SessionLUT.MouseName,ExpGroup{3}{m}))+ImagingWeekShift(m)-1;
+    
+    % after week 11 imaged only every other week
+    biweeklyIDX = find(strcmp(SessionLUT.MouseName,ExpGroup{3}{m}) & SessionLUT.ImagingWeek > 11);
+    for i = biweeklyIDX
+       SessionLUT.ImagingWeek(i) = 11 + (SessionLUT.ImagingWeek(i)-11)*2;
+    end
+    
 end
 
 
