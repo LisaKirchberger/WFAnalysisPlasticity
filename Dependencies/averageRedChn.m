@@ -12,6 +12,7 @@ ImagePaths = dir('*.tiff');
 
 if ~exist('AnalysisParameters','var')
     cd(MatlabPath)
+    AnalysisParameters = [];
     AnalysisParameters = getFixedParameters(AnalysisParameters);
     cd(FolderPath)
 end

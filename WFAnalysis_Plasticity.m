@@ -66,6 +66,9 @@ if strcmp(AnalysisParameters.Task ,'EasyOptoDetection_PassiveMultiLaser')
     makeCondVideos_EasyOptoDetection_PassiveMultiLaser(AnalysisParameters)
     makeVideos_arrow_EasyOptoDetection_PassiveMultiLaser(AnalysisParameters)
     plotTimecourses_AVG_MultiLaser(AnalysisParameters)
+    for i = 1:size(AnalyseDataDets.SessID,2)
+        averageRedChn
+    end
     extractTdTomFluor(AnalysisParameters)
 end
 
