@@ -5,6 +5,7 @@ function extractTdTomFluor(AnalysisParameters)
 load(AnalysisParameters.SessionLUTPath, 'SessionLUT')
 Mice = unique(SessionLUT.MouseName);
 
+allMouseTdTom = [];
 
 %% look for all images
 
@@ -16,6 +17,7 @@ for m = 1:length(Mice)
     % check all subfolders for 'avgImage_tdTom.tiff'
     MouseImages = [];
     Dates = [];
+    Datetimes = [];
     counter = 1;
     foldersDate = dir(); foldersDate = foldersDate([foldersDate.isdir]); foldersDate = foldersDate(~ismember({foldersDate.name}, {'.', '..'}));
     for f = 1:size(foldersDate,1)
@@ -26,6 +28,7 @@ for m = 1:length(Mice)
             if exist('avgImage_tdTom.tiff', 'file')
                 MouseImages{counter} = fullfile(foldersSess(fS).folder, foldersSess(fS).name, 'avgImage_tdTom.tiff');
                 Dates{counter} = foldersSess(fS).folder(end-7:end);
+                Datetimes(counter) = datenum(str2double(Dates{counter}(1:4)),str2double(Dates{counter}(5:6)),str2double(Dates{counter}(7:8)));
                 counter = counter + 1;
             end
         end
@@ -78,8 +81,27 @@ for m = 1:length(Mice)
     
     saveas(gcf, fullfile(AnalysisParameters.TaskDataPath, 'TdTomato', [Mouse, '_tdTomatoExtracted']), 'jpeg')
     close(gcf), clear AxesHandle
+    
+    allMouseTdTom{m} = mROIData - mean(mROIData);
+    allMouseDates{m} = Datetimes;
 
 end
+
+%% plot the TdTom data for all mice 
+
+figure('Position', [680   657   436   255])
+for m = 1:length(Mice)
+    plot(allMouseDates{m}, allMouseTdTom{m}, 'k'),box off,set(gca,'TickDir','out'),hold on
+end
+plottingDates = unique([allMouseDates{:}]);
+plottingDatestr = datestr(plottingDates);
+xticks(plottingDates),xtickangle(45),xticklabels(plottingDatestr),axis tight
+plot(get(gca,'Xlim'),[0 0], 'r--')
+set(gca,'Ylim', [-max(abs(get(gca,'YLim')))  max(abs(get(gca,'YLim')))])
+
+
+saveas(gcf, fullfile(AnalysisParameters.TaskDataPath, 'TdTomato', 'AllMice_tdTomatoExtracted'), 'jpeg')
+close(gcf)
 
 
 end
